@@ -507,3 +507,807 @@ button, input {
   border: 1px dashed var(--sal-border-strong);
   border-radius: var(--sal-radius-lg);
 }
+
+
+/* =========================================================
+   Extended Components: Nav, Directory, Detail, Profile, Settings
+   ========================================================= */
+
+.sal-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Navbar Enhancements */
+.sal-navbar-logo {
+  vertical-align: middle;
+  margin-right: 0.4rem;
+}
+
+.sal-navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.sal-nav-link {
+  color: var(--sal-text-muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--sal-radius-sm);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.sal-nav-link:hover, .sal-nav-link.active {
+  color: var(--sal-text);
+  background: var(--sal-surface-sunken);
+  text-decoration: none;
+}
+
+.sal-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--sal-text);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.sal-user-badge:hover {
+  text-decoration: none;
+}
+
+.sal-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--sal-accent);
+  color: #2a1c0a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sal-font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 6px rgba(224, 146, 60, 0.3);
+}
+
+.sal-btn-sm {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.sal-btn-following {
+  background: #e8f3ec;
+  color: #2b6e48;
+  border: 1px solid #b7dfc7;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: var(--sal-radius-sm);
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.sal-btn-following:hover {
+  background: #d9ecdf;
+}
+
+.sal-btn-bad {
+  background: var(--sal-bad);
+  color: #fff;
+  border: none;
+}
+
+/* Hero & Search */
+.sal-hero-tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sal-accent-deep);
+  background: var(--sal-accent-tint);
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: 0.8rem;
+}
+
+.sal-search-box {
+  margin: 1.8rem auto 0 auto;
+  max-width: 660px;
+}
+
+.sal-search-inputs {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.sal-search-input-wrap {
+  position: relative;
+  flex: 2;
+}
+
+.sal-search-icon {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--sal-text-muted);
+  pointer-events: none;
+}
+
+.sal-search-input {
+  padding-left: 2.5rem !important;
+  margin-bottom: 0 !important;
+}
+
+.sal-filter-select {
+  flex: 1;
+  margin-bottom: 0 !important;
+  background-color: var(--sal-surface);
+  cursor: pointer;
+}
+
+.sal-search-btn {
+  width: auto !important;
+  white-space: nowrap;
+}
+
+.sal-active-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  font-size: 0.85rem;
+  color: var(--sal-text-muted);
+}
+
+.sal-filter-pill {
+  background: var(--sal-surface);
+  border: 1px solid var(--sal-border-strong);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 500;
+  color: var(--sal-text);
+}
+
+.sal-clear-filters {
+  color: var(--sal-bad);
+  font-weight: 600;
+  margin-left: 0.4rem;
+}
+
+/* Stats Counter Strip */
+.sal-stats-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2.2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--sal-border);
+}
+
+.sal-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sal-stat-num {
+  font-family: var(--sal-font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--sal-text);
+  line-height: 1.1;
+}
+
+.sal-stat-label {
+  font-size: 0.78rem;
+  color: var(--sal-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.2rem;
+}
+
+.sal-stat-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--sal-border);
+}
+
+/* Company Card Enhancements */
+.sal-company-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.sal-company-card-link:hover {
+  text-decoration: none;
+}
+
+.sal-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.8rem;
+}
+
+.sal-company-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--sal-radius-sm);
+  background: var(--sal-surface-sunken);
+  border: 1px solid var(--sal-border);
+  color: var(--sal-accent-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sal-font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.sal-following-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  color: #2b6e48;
+  background: #e8f3ec;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.sal-card-arrow {
+  margin-left: auto;
+  color: var(--sal-accent);
+  font-size: 1.1rem;
+  transition: transform 0.15s ease;
+}
+
+.sal-company-card:hover .sal-card-arrow {
+  transform: translateX(4px);
+}
+
+.sal-tag-muted {
+  opacity: 0.6;
+}
+
+/* Company Detail Screen */
+.sal-detail-header-wrap {
+  background: var(--sal-surface);
+  border-bottom: 1px solid var(--sal-border);
+  padding: 1.5rem 0 0 0;
+}
+
+.sal-back-link {
+  display: inline-block;
+  font-size: 0.88rem;
+  color: var(--sal-text-muted);
+  margin-bottom: 1.2rem;
+}
+
+.sal-back-link:hover {
+  color: var(--sal-text);
+  text-decoration: none;
+}
+
+.sal-detail-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.sal-detail-hero-left {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+}
+
+.sal-detail-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--sal-radius-md);
+  background: var(--sal-surface-sunken);
+  border: 1px solid var(--sal-border-strong);
+  color: var(--sal-accent-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sal-font-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+}
+
+.sal-detail-info h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.sal-detail-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  font-size: 0.88rem;
+  color: var(--sal-text-muted);
+}
+
+.sal-meta-badge {
+  background: var(--sal-surface-sunken);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--sal-radius-sm);
+  font-weight: 500;
+  color: var(--sal-text);
+}
+
+.sal-meta-loc {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.sal-detail-hero-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.sal-detail-rating-box {
+  text-align: right;
+}
+
+.sal-detail-rating-score {
+  font-family: var(--sal-font-display);
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--sal-good);
+  line-height: 1;
+}
+
+.sal-detail-rating-score.warn { color: var(--sal-warn); }
+.sal-detail-rating-score.bad  { color: var(--sal-bad); }
+
+.sal-detail-rating-count {
+  font-size: 0.82rem;
+  color: var(--sal-text-muted);
+}
+
+/* Tabs */
+.sal-tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--sal-border);
+}
+
+.sal-tab {
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--sal-text-muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.sal-tab:hover {
+  color: var(--sal-text);
+  text-decoration: none;
+}
+
+.sal-tab.active {
+  color: var(--sal-accent-deep);
+  border-bottom-color: var(--sal-accent-deep);
+}
+
+.sal-detail-body {
+  padding: 2.5rem 1.5rem 5rem 1.5rem;
+}
+
+.sal-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2rem;
+}
+
+@media (max-width: 900px) {
+  .sal-split-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sal-card {
+  background: var(--sal-surface);
+  border: 1px solid var(--sal-border);
+  border-radius: var(--sal-radius-lg);
+  padding: 1.5rem;
+}
+
+.sal-sticky-card {
+  position: sticky;
+  top: 5rem;
+}
+
+.sal-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+}
+
+.sal-card-sub {
+  font-size: 0.85rem;
+  color: var(--sal-text-muted);
+  margin-bottom: 1.2rem;
+}
+
+.sal-form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sal-text);
+  margin-bottom: 0.4rem;
+}
+
+.sal-select, .sal-textarea {
+  width: 100%;
+}
+
+.sal-checkbox-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--sal-text-muted);
+}
+
+.sal-checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+/* Reviews List */
+.sal-reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.sal-review-card {
+  background: var(--sal-surface);
+  border: 1px solid var(--sal-border);
+  border-radius: var(--sal-radius-md);
+  padding: 1.3rem;
+}
+
+.sal-review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.8rem;
+}
+
+.sal-reviewer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.sal-reviewer-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--sal-text);
+}
+
+.sal-review-role {
+  font-size: 0.82rem;
+  color: var(--sal-text-muted);
+}
+
+.sal-review-meta-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+
+.sal-review-date {
+  font-size: 0.78rem;
+  color: var(--sal-text-muted);
+}
+
+.sal-review-comment {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--sal-text);
+  margin: 0.8rem 0;
+}
+
+.sal-review-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--sal-border);
+  font-size: 0.85rem;
+}
+
+.sal-vote-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sal-vote-label {
+  font-size: 0.8rem;
+  color: var(--sal-text-muted);
+}
+
+.sal-vote-btn {
+  background: var(--sal-surface-sunken);
+  border: 1px solid var(--sal-border);
+  border-radius: var(--sal-radius-sm);
+  padding: 0.25rem 0.55rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.sal-vote-btn:hover {
+  border-color: var(--sal-accent);
+}
+
+.sal-vote-btn.active {
+  background: var(--sal-accent-tint);
+  border-color: var(--sal-accent);
+  font-weight: 600;
+}
+
+.sal-report-link {
+  cursor: pointer;
+  color: var(--sal-text-muted);
+  font-size: 0.8rem;
+}
+
+.sal-report-form {
+  margin-top: 0.5rem;
+  padding: 0.8rem;
+  background: var(--sal-surface-sunken);
+  border-radius: var(--sal-radius-sm);
+}
+
+.sal-report-hint {
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+/* Salaries View */
+.sal-salary-summary-banner {
+  background: linear-gradient(135deg, #fdfcf9, #faf5ec);
+  border: 1px solid var(--sal-border);
+  border-left: 4px solid var(--sal-accent);
+  border-radius: var(--sal-radius-md);
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.8rem;
+}
+
+.sal-summary-label {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sal-text-muted);
+}
+
+.sal-summary-value {
+  font-family: var(--sal-font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--sal-accent-deep);
+}
+
+.sal-summary-context {
+  max-width: 240px;
+  font-size: 0.82rem;
+  color: var(--sal-text-muted);
+  text-align: right;
+}
+
+.sal-subheading {
+  font-size: 1.15rem;
+  margin-bottom: 0.8rem;
+}
+
+.sal-roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.sal-role-card {
+  background: var(--sal-surface);
+  border: 1px solid var(--sal-border);
+  border-radius: var(--sal-radius-sm);
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sal-role-title {
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.sal-role-count {
+  font-size: 0.75rem;
+  color: var(--sal-text-muted);
+}
+
+.sal-role-avg {
+  font-family: var(--sal-font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--sal-text);
+}
+
+.sal-salaries-table-wrap {
+  background: var(--sal-surface);
+  border: 1px solid var(--sal-border);
+  border-radius: var(--sal-radius-md);
+  overflow: hidden;
+}
+
+.sal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.sal-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: var(--sal-surface-sunken);
+  color: var(--sal-text-muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--sal-border);
+}
+
+.sal-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--sal-border);
+}
+
+.sal-table tr:last-child td {
+  border-bottom: none;
+}
+
+.sal-salary-cell {
+  font-family: var(--sal-font-display);
+  font-weight: 600;
+  color: var(--sal-text);
+}
+
+.sal-date-cell {
+  font-size: 0.8rem;
+  color: var(--sal-text-muted);
+}
+
+/* Profile Page */
+.sal-profile-page {
+  padding: 3rem 1.5rem 5rem 1.5rem;
+}
+
+.sal-profile-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 860px) {
+  .sal-profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sal-profile-avatar-lg {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--sal-accent);
+  color: #2a1c0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sal-font-display);
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(224, 146, 60, 0.3);
+}
+
+.sal-username-tag {
+  color: var(--sal-accent-deep);
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 1.2rem;
+}
+
+.sal-user-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.86rem;
+  color: var(--sal-text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.sal-bio-text {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--sal-border);
+  font-size: 0.9rem;
+  color: var(--sal-text);
+}
+
+/* Settings Page */
+.sal-settings-page {
+  padding: 3rem 1.5rem 5rem 1.5rem;
+}
+
+.sal-settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 680px;
+}
+
+.sal-settings-item-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.sal-settings-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--sal-radius-sm);
+  background: var(--sal-surface-sunken);
+  color: var(--sal-accent-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sal-setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-top: 1px solid var(--sal-border);
+}
+
+.sal-badge-status-online {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2b6e48;
+  background: #e8f3ec;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}

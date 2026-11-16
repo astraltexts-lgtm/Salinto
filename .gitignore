@@ -54,3 +54,10 @@ $RECYCLE.BIN/
 
 # Logs
 *.log
+
+# Submission & Evidence Artifacts
+BASELINE_COMMIT.txt
+GIT_*.txt
+*.patch
+DUARTE_FINAL_PROJECT*
+
