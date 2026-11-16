@@ -6,7 +6,12 @@
 
 <div class="sal-detail-header-wrap">
   <div class="sal-container">
-    <a href="{% url 'home:home' %}" class="sal-back-link">&larr; Back to all companies</a>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="{% url 'home:home' %}" class="sal-back-link">&larr; Back to all companies</a>
+      <a href="{% url 'home:compare' %}?c1={{ company.pk }}" class="sal-btn sal-btn-ghost sal-btn-sm" style="margin-bottom: 1.2rem;">
+        &#9878; Compare with another company
+      </a>
+    </div>
 
     <div class="sal-detail-hero">
       <div class="sal-detail-hero-left">
@@ -24,7 +29,7 @@
               </svg>
               {{ company.location }}
             </span>
-            <span class="sal-meta-followers">
+            <span class="sal-meta-followers" id="followers-count-badge">
               {{ followers_count }} follower{{ followers_count|pluralize }}
             </span>
           </div>
@@ -39,24 +44,22 @@
           <div class="sal-detail-rating-count">{{ company.review_count }} review{{ company.review_count|pluralize }}</div>
         </div>
 
-        <form method="post" action="{% url 'home:toggle_follow' company.pk %}">
+        <form method="post" action="{% url 'home:toggle_follow' company.pk %}" id="follow-form">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
-          {% if is_following %}
-            <button type="submit" class="sal-btn sal-btn-following">
+          <button type="submit" id="follow-btn" class="sal-btn {% if is_following %}sal-btn-following{% else %}sal-btn-primary{% endif %}">
+            {% if is_following %}
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
               </svg>
-              Following
-            </button>
-          {% else %}
-            <button type="submit" class="sal-btn sal-btn-primary">
+              <span>Following</span>
+            {% else %}
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 5v14M5 12h14"/>
               </svg>
-              Follow Company
-            </button>
-          {% endif %}
+              <span>Follow Company</span>
+            {% endif %}
+          </button>
         </form>
       </div>
     </div>
@@ -77,11 +80,53 @@
   {% if active_tab == 'reviews' %}
     <!-- REVIEWS TAB -->
     <div class="sal-split-layout">
-      <!-- Main Column: Reviews List -->
+      <!-- Main Column: Reviews List & Rating Breakdown -->
       <div class="sal-main-col">
-        <div class="sal-section-header">
-          <h2>Community Reviews for {{ company.name }}</h2>
-          <span class="sal-count">{{ reviews|length }} verified submissions</span>
+        <!-- Rating Distribution Summary Card -->
+        <div class="sal-card sal-rating-breakdown-card">
+          <div class="sal-breakdown-score-side">
+            <div class="sal-breakdown-big-num {% if company.rating < 3.0 %}bad{% elif company.rating < 4.0 %}warn{% endif %}">
+              {{ company.rating|floatformat:1 }}
+            </div>
+            <div class="sal-stars-row">★★★★★</div>
+            <div class="sal-breakdown-sub">{{ company.review_count }} total ratings</div>
+            <div class="sal-rec-pill">
+              <strong>{{ recommendation_pct }}%</strong> recommend working here
+            </div>
+          </div>
+
+          <div class="sal-breakdown-bars-side">
+            {% for row in rating_distribution %}
+              <a href="?tab=reviews&star={{ row.star }}" class="sal-dist-row-link {% if rating_filter == row.star|stringformat:'s' %}active{% endif %}">
+                <span class="sal-dist-star-label">{{ row.star }} ★</span>
+                <div class="sal-dist-bar-track">
+                  <div class="sal-dist-bar-fill" style="width: {{ row.pct }}%;"></div>
+                </div>
+                <span class="sal-dist-pct">{{ row.count }} ({{ row.pct }}%)</span>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Filter & Sort Bar -->
+        <div class="sal-reviews-controls">
+          <div class="sal-reviews-filter-info">
+            {% if rating_filter %}
+              <span class="sal-filter-pill">Showing only {{ rating_filter }}★ reviews</span>
+              <a href="?tab=reviews" class="sal-clear-filters">&times; Show all</a>
+            {% else %}
+              <span>Showing all employee reviews</span>
+            {% endif %}
+          </div>
+
+          <div class="sal-sort-wrap">
+            <label for="review_sort_select">Sort by:</label>
+            <select id="review_sort_select" class="sal-input sal-select" style="width: auto; margin-bottom: 0;" onchange="location.href='?tab=reviews{% if rating_filter %}&star={{ rating_filter }}{% endif %}&review_sort=' + this.value">
+              <option value="newest" {% if review_sort == 'newest' %}selected{% endif %}>Newest first</option>
+              <option value="highest" {% if review_sort == 'highest' %}selected{% endif %}>Highest rating</option>
+              <option value="lowest" {% if review_sort == 'lowest' %}selected{% endif %}>Lowest rating</option>
+            </select>
+          </div>
         </div>
 
         {% if reviews %}
@@ -125,22 +170,14 @@
                 </div>
 
                 <div class="sal-review-footer">
-                  <div class="sal-vote-group">
-                    <span class="sal-vote-label">Was this review helpful?</span>
-                    <form method="post" action="{% url 'home:vote_review' review.pk %}" style="display:inline;">
-                      {% csrf_token %}
-                      <input type="hidden" name="is_helpful" value="true">
-                      <button type="submit" class="sal-vote-btn {% if user_votes|default_if_none:''|dictsort:review.id and user_votes.review.id == True %}active{% endif %}">
-                        &#128077; Helpful ({{ review.helpful_count }})
-                      </button>
-                    </form>
-                    <form method="post" action="{% url 'home:vote_review' review.pk %}" style="display:inline;">
-                      {% csrf_token %}
-                      <input type="hidden" name="is_helpful" value="false">
-                      <button type="submit" class="sal-vote-btn">
-                        &#128078; ({{ review.unhelpful_count }})
-                      </button>
-                    </form>
+                  <div class="sal-vote-group" data-review-id="{{ review.id }}">
+                    <span class="sal-vote-label">Was this helpful?</span>
+                    <button type="button" class="sal-vote-btn js-vote-btn" data-helpful="true" data-url="{% url 'home:vote_review' review.pk %}">
+                      &#128077; Helpful (<span class="sal-vote-count">{{ review.helpful_count }}</span>)
+                    </button>
+                    <button type="button" class="sal-vote-btn js-vote-btn" data-helpful="false" data-url="{% url 'home:vote_review' review.pk %}">
+                      &#128078; (<span class="sal-vote-count">{{ review.unhelpful_count }}</span>)
+                    </button>
                   </div>
 
                   <!-- Moderation Flag -->
@@ -159,13 +196,15 @@
           </div>
         {% else %}
           <div class="sal-empty">
-            <p>No reviews have been written for {{ company.name }} yet.</p>
-            <p>Be the first employee or alumni to share your experience!</p>
+            <p>No reviews match your filter.</p>
+            <a href="?tab=reviews" class="sal-btn sal-btn-ghost sal-btn-sm" style="display: inline-flex; margin-top: 0.5rem;">
+              Clear review filter
+            </a>
           </div>
         {% endif %}
       </div>
 
-      <!-- Side Column: Write a Review Form -->
+      <!-- Side Column: Write a Review Form with Interactive Star Picker -->
       <div class="sal-side-col">
         <div class="sal-card sal-sticky-card">
           <h3>Write a Review</h3>
@@ -173,10 +212,20 @@
 
           <form method="post" action="{% url 'home:add_review' company.pk %}">
             {% csrf_token %}
+            
             <label class="sal-form-label">Overall Rating</label>
-            {{ review_form.rating }}
+            <!-- Interactive Star Picker Widget -->
+            <div class="sal-star-picker" id="star-picker">
+              <span class="star-item" data-value="1">★</span>
+              <span class="star-item" data-value="2">★</span>
+              <span class="star-item" data-value="3">★</span>
+              <span class="star-item" data-value="4">★</span>
+              <span class="star-item" data-value="5">★</span>
+              <span class="star-rating-hint" id="star-hint">5 Stars (Excellent)</span>
+            </div>
+            <input type="hidden" name="rating" id="selected-rating" value="5">
 
-            <label class="sal-form-label">Your Job Title / Role</label>
+            <label class="sal-form-label" style="margin-top: 0.8rem;">Your Job Title / Role</label>
             {{ review_form.job_title }}
 
             <label class="sal-form-label">Employment Type</label>
@@ -186,7 +235,7 @@
             {{ review_form.comment }}
 
             <button type="submit" class="sal-btn sal-btn-primary" style="margin-top: 0.5rem;">
-              Post Review
+              Publish Review
             </button>
           </form>
         </div>
@@ -196,33 +245,43 @@
   {% elif active_tab == 'salaries' %}
     <!-- SALARIES TAB -->
     <div class="sal-split-layout">
-      <!-- Main Column: Salary Insights -->
+      <!-- Main Column: Salary Insights & Philippine 13th-Month Pay Breakdown -->
       <div class="sal-main-col">
         <div class="sal-section-header">
-          <h2>Philippine Salary Insights at {{ company.name }}</h2>
-          <span class="sal-count">{{ salaries|length }} reported salaries</span>
+          <h2>Philippine Compensation at {{ company.name }}</h2>
+          <span class="sal-count">{{ salaries|length }} verified reports</span>
         </div>
 
-        {% if overall_avg_salary %}
-          <div class="sal-salary-summary-banner">
-            <div>
-              <span class="sal-summary-label">Average Monthly Base Pay</span>
-              <div class="sal-summary-value">&#8369;{{ overall_avg_salary|floatformat:0 }} <small>/ month</small></div>
-            </div>
-            <div class="sal-summary-context">
-              Based on {{ salaries|length }} verified salary reports from Salinto members.
+        {% if salary_summary.avg %}
+          <!-- 13th Month Pay Annual Package Summary -->
+          <div class="sal-card sal-salary-hero-card">
+            <div class="sal-salary-hero-grid">
+              <div>
+                <span class="sal-summary-label">Average Monthly Base Pay</span>
+                <div class="sal-summary-value">&#8369;{{ salary_summary.avg|floatformat:0 }} <small>/ month</small></div>
+                <div class="sal-salary-range-text">
+                  Range: &#8369;{{ salary_summary.min|floatformat:0 }} &ndash; &#8369;{{ salary_summary.max|floatformat:0 }} / mo
+                </div>
+              </div>
+
+              <div class="sal-13th-month-box">
+                <span class="sal-ph-badge">&#127477;&#127469; PH Framework</span>
+                <span class="sal-summary-label" style="color: #2a1c0a;">Est. 13th-Month Annual Total</span>
+                <div class="sal-annual-val">&#8369;{{ salary_summary.annual_13th_month|floatformat:0 }} <small>/ year</small></div>
+                <p class="sal-annual-explainer">Based on 12 months + mandatory 13th-month pay (P.D. 851)</p>
+              </div>
             </div>
           </div>
         {% endif %}
 
         {% if roles_summary %}
-          <h3 class="sal-subheading">Pay by Role</h3>
+          <h3 class="sal-subheading" style="margin-top: 2rem;">Salary by Role</h3>
           <div class="sal-roles-grid">
             {% for role in roles_summary %}
               <div class="sal-role-card">
                 <div>
                   <div class="sal-role-title">{{ role.job_title }}</div>
-                  <div class="sal-role-count">{{ role.count }} submission{{ role.count|pluralize }}</div>
+                  <div class="sal-role-count">{{ role.count }} report{{ role.count|pluralize }}</div>
                 </div>
                 <div class="sal-role-avg">&#8369;{{ role.avg_salary|floatformat:0 }}<small>/mo</small></div>
               </div>
@@ -230,7 +289,7 @@
           </div>
         {% endif %}
 
-        <h3 class="sal-subheading" style="margin-top: 2rem;">Individual Submissions</h3>
+        <h3 class="sal-subheading" style="margin-top: 2.5rem;">Reported Salary Entries</h3>
         {% if salaries %}
           <div class="sal-salaries-table-wrap">
             <table class="sal-table">
@@ -293,9 +352,9 @@
             <label class="sal-form-label">Employment Type</label>
             {{ salary_form.employment_type }}
 
-            <div class="sal-checkbox-wrap" style="margin: 1rem 0;">
+            <div class="sal-checkbox-wrap" style="margin: 1.2rem 0;">
               {{ salary_form.is_anonymous }}
-              <label for="{{ salary_form.is_anonymous.id_for_label }}">Keep my submission anonymous</label>
+              <label for="{{ salary_form.is_anonymous.id_for_label }}">Submit anonymously (protect identity)</label>
             </div>
 
             <button type="submit" class="sal-btn sal-btn-primary">
@@ -307,4 +366,131 @@
     </div>
   {% endif %}
 </div>
+
+<!-- Dynamic Client-Side Interactivity Script -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Interactive 5-Star Rating Picker
+  const starPicker = document.getElementById('star-picker');
+  if (starPicker) {
+    const stars = starPicker.querySelectorAll('.star-item');
+    const hiddenRatingInput = document.getElementById('selected-rating');
+    const hint = document.getElementById('star-hint');
+    const labels = {
+      1: '1 Star (Very Poor)',
+      2: '2 Stars (Below Average)',
+      3: '3 Stars (Average / Neutral)',
+      4: '4 Stars (Good)',
+      5: '5 Stars (Excellent)',
+    };
+
+    function updateStars(val) {
+      stars.forEach(s => {
+        const sVal = parseInt(s.dataset.value);
+        if (sVal <= val) {
+          s.classList.add('selected');
+        } else {
+          s.classList.remove('selected');
+        }
+      });
+      hiddenRatingInput.value = val;
+      if (hint) hint.textContent = labels[val] || `${val} Stars`;
+    }
+
+    updateStars(parseInt(hiddenRatingInput.value) || 5);
+
+    stars.forEach(s => {
+      s.addEventListener('click', () => {
+        updateStars(parseInt(s.dataset.value));
+      });
+      s.addEventListener('mouseenter', () => {
+        const val = parseInt(s.dataset.value);
+        stars.forEach(item => {
+          item.classList.toggle('hovered', parseInt(item.dataset.value) <= val);
+        });
+      });
+    });
+
+    starPicker.addEventListener('mouseleave', () => {
+      stars.forEach(item => item.classList.remove('hovered'));
+    });
+  }
+
+  // 2. AJAX Follow Button Toggle
+  const followForm = document.getElementById('follow-form');
+  if (followForm) {
+    followForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('follow-btn');
+      const badge = document.getElementById('followers-count-badge');
+      const csrfToken = followForm.querySelector('[name=csrfmiddlewaretoken]').value;
+
+      try {
+        const res = await fetch(followForm.action, {
+          method: 'POST',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': csrfToken,
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.is_following) {
+            btn.className = 'sal-btn sal-btn-following';
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg> <span>Following</span>`;
+          } else {
+            btn.className = 'sal-btn sal-btn-primary';
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span>Follow Company</span>`;
+          }
+          if (badge) {
+            badge.textContent = `${data.followers_count} follower${data.followers_count === 1 ? '' : 's'}`;
+          }
+        }
+      } catch (err) {
+        followForm.submit(); // fallback
+      }
+    });
+  }
+
+  // 3. AJAX Helpful Review Voting
+  document.querySelectorAll('.js-vote-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const url = btn.dataset.url;
+      const isHelpful = btn.dataset.helpful;
+      const group = btn.closest('.sal-vote-group');
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+      try {
+        const formData = new FormData();
+        formData.append('is_helpful', isHelpful);
+
+        const res = await fetch(url, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': csrfToken,
+          }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const helpfulBtn = group.querySelector('[data-helpful="true"] .sal-vote-count');
+          const unhelpfulBtn = group.querySelector('[data-helpful="false"] .sal-vote-count');
+          if (helpfulBtn) helpfulBtn.textContent = data.helpful_count;
+          if (unhelpfulBtn) unhelpfulBtn.textContent = data.unhelpful_count;
+          group.querySelectorAll('.js-vote-btn').forEach(b => b.classList.remove('active'));
+          if (data.user_vote === true) {
+            group.querySelector('[data-helpful="true"]').classList.add('active');
+          } else if (data.user_vote === false) {
+            group.querySelector('[data-helpful="false"]').classList.add('active');
+          }
+        }
+      } catch (err) {
+        console.error('Vote failed', err);
+      }
+    });
+  });
+});
+</script>
 {% endblock %}

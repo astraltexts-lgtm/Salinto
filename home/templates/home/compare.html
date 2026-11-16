@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}Workplace Comparison · Salinto{% endblock %}
+
+{% block content %}
+{% include "navbar.html" %}
+
+<div class="sal-container sal-compare-page">
+  <div class="sal-content-heading">
+    <div>
+      <div class="sal-hero-tag">Transparency Decision Tool</div>
+      <h2>Compare Philippine Workplaces</h2>
+      <p class="sal-content-sub">Evaluate compensation packages, culture ratings, and employment conditions side-by-side.</p>
+    </div>
+  </div>
+
+  <!-- Selection Form -->
+  <form method="get" class="sal-card sal-compare-selector-card">
+    <div class="sal-compare-form-grid">
+      <div>
+        <label class="sal-form-label">First Company</label>
+        <select name="c1" class="sal-input sal-select" onchange="this.form.submit()">
+          {% for c in all_companies %}
+            <option value="{{ c.pk }}" {% if company1.pk == c.pk %}selected{% endif %}>
+              {{ c.name }} ({{ c.industry.name }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="sal-compare-vs-badge">VS</div>
+
+      <div>
+        <label class="sal-form-label">Second Company</label>
+        <select name="c2" class="sal-input sal-select" onchange="this.form.submit()">
+          {% for c in all_companies %}
+            <option value="{{ c.pk }}" {% if company2.pk == c.pk %}selected{% endif %}>
+              {{ c.name }} ({{ c.industry.name }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </form>
+
+  {% if company1 and company2 %}
+    <div class="sal-compare-matrix">
+      <!-- Headings / Company Columns -->
+      <div class="sal-compare-cols-header">
+        <div class="sal-compare-metric-col"></div>
+        <div class="sal-compare-company-col">
+          <div class="sal-company-avatar" style="margin-bottom: 0.5rem;">
+            {{ company1.name|slice:":2"|upper }}
+          </div>
+          <h3>{{ company1.name }}</h3>
+          <span class="sal-meta-badge">{{ company1.industry.name }}</span>
+          <a href="{% url 'home:company_detail' company1.pk %}" class="sal-btn sal-btn-ghost sal-btn-sm" style="margin-top: 0.8rem;">
+            View Profile &rarr;
+          </a>
+        </div>
+
+        <div class="sal-compare-company-col">
+          <div class="sal-company-avatar" style="margin-bottom: 0.5rem;">
+            {{ company2.name|slice:":2"|upper }}
+          </div>
+          <h3>{{ company2.name }}</h3>
+          <span class="sal-meta-badge">{{ company2.industry.name }}</span>
+          <a href="{% url 'home:company_detail' company2.pk %}" class="sal-btn sal-btn-ghost sal-btn-sm" style="margin-top: 0.8rem;">
+            View Profile &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Metric Rows -->
+      <div class="sal-compare-row">
+        <div class="sal-metric-name">
+          <strong>Overall Rating</strong>
+          <span>Aggregated from verified employee reviews</span>
+        </div>
+        <div class="sal-metric-val">
+          <span class="sal-rating-badge {% if company1.rating < 3 %}bad{% elif company1.rating < 4 %}warn{% endif %}">
+            ★ {{ company1.rating|floatformat:1 }}
+          </span>
+          <small>{{ company1.review_count }} review{{ company1.review_count|pluralize }}</small>
+        </div>
+        <div class="sal-metric-val">
+          <span class="sal-rating-badge {% if company2.rating < 3 %}bad{% elif company2.rating < 4 %}warn{% endif %}">
+            ★ {{ company2.rating|floatformat:1 }}
+          </span>
+          <small>{{ company2.review_count }} review{{ company2.review_count|pluralize }}</small>
+        </div>
+      </div>
+
+      <div class="sal-compare-row">
+        <div class="sal-metric-name">
+          <strong>Recommendation Rate</strong>
+          <span>Percentage rating 4 or 5 stars</span>
+        </div>
+        <div class="sal-metric-val">
+          <div class="sal-rec-val">{{ company1.recommendation_percentage }}%</div>
+          <small>positive outlook</small>
+        </div>
+        <div class="sal-metric-val">
+          <div class="sal-rec-val">{{ company2.recommendation_percentage }}%</div>
+          <small>positive outlook</small>
+        </div>
+      </div>
+
+      <div class="sal-compare-row">
+        <div class="sal-metric-name">
+          <strong>Average Monthly Base Pay</strong>
+          <span>Reported by employees & alumni</span>
+        </div>
+        <div class="sal-metric-val">
+          {% if data1.avg %}
+            <div class="sal-salary-cell" style="font-size: 1.25rem; color: var(--sal-accent-deep);">
+              &#8369;{{ data1.avg|floatformat:0 }}<small>/mo</small>
+            </div>
+            <small>{{ data1.count }} salary report{{ data1.count|pluralize }}</small>
+          {% else %}
+            <span class="sal-text-muted">No data</span>
+          {% endif %}
+        </div>
+        <div class="sal-metric-val">
+          {% if data2.avg %}
+            <div class="sal-salary-cell" style="font-size: 1.25rem; color: var(--sal-accent-deep);">
+              &#8369;{{ data2.avg|floatformat:0 }}<small>/mo</small>
+            </div>
+            <small>{{ data2.count }} salary report{{ data2.count|pluralize }}</small>
+          {% else %}
+            <span class="sal-text-muted">No data</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="sal-compare-row">
+        <div class="sal-metric-name">
+          <strong>Annual Package (13th-Month)</strong>
+          <span>Base x 13 Philippine mandatory framework</span>
+        </div>
+        <div class="sal-metric-val">
+          {% if data1.annual_13th_month %}
+            <strong style="color: var(--sal-text);">&#8369;{{ data1.annual_13th_month|floatformat:0 }}</strong>
+          {% else %}
+            <span class="sal-text-muted">No data</span>
+          {% endif %}
+        </div>
+        <div class="sal-metric-val">
+          {% if data2.annual_13th_month %}
+            <strong style="color: var(--sal-text);">&#8369;{{ data2.annual_13th_month|floatformat:0 }}</strong>
+          {% else %}
+            <span class="sal-text-muted">No data</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="sal-compare-row">
+        <div class="sal-metric-name">
+          <strong>Headquarters Location</strong>
+        </div>
+        <div class="sal-metric-val">
+          {{ company1.location }}
+        </div>
+        <div class="sal-metric-val">
+          {{ company2.location }}
+        </div>
+      </div>
+
+      <div class="sal-compare-row">
+        <div class="sal-metric-name">
+          <strong>Employment Terms Offered</strong>
+        </div>
+        <div class="sal-metric-val">
+          <div class="sal-tags">
+            {% for et in company1.employment_types.all %}
+              <span class="sal-tag">{{ et.name }}</span>
+            {% empty %}
+              <span class="sal-tag sal-tag-muted">Direct hire</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="sal-metric-val">
+          <div class="sal-tags">
+            {% for et in company2.employment_types.all %}
+              <span class="sal-tag">{{ et.name }}</span>
+            {% empty %}
+              <span class="sal-tag sal-tag-muted">Direct hire</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
