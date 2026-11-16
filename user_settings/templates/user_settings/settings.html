@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Account Settings · Salinto{% endblock %}
+
+{% block content %}
+{% include "navbar.html" %}
+
+<div class="sal-container sal-settings-page">
+  <div class="sal-content-heading">
+    <div>
+      <h2>Account & Preferences</h2>
+      <p class="sal-content-sub">Manage your email alerts, privacy choices, and account credentials.</p>
+    </div>
+  </div>
+
+  <div class="sal-settings-grid">
+    <!-- Notification Preferences Card -->
+    <div class="sal-card">
+      <div class="sal-settings-item-header">
+        <div class="sal-settings-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+        </div>
+        <div>
+          <h3>Notification Preferences</h3>
+          <p class="sal-card-sub">Control alerts regarding reviews, helpful votes, and company updates.</p>
+        </div>
+      </div>
+
+      <div class="sal-setting-row">
+        <div>
+          <strong>Email Notifications</strong>
+          <p style="margin: 0.2rem 0 0 0; font-size: 0.88rem; color: var(--sal-text-muted);">
+            Receive email notifications when new reviews or salary benchmarks are added to companies you follow.
+          </p>
+        </div>
+
+        <form method="post" action="{% url 'user_settings:toggle_notifications' %}">
+          {% csrf_token %}
+          {% if settings.email_notifications %}
+            <button type="submit" class="sal-btn sal-btn-following sal-btn-sm">
+              &check; Active (Click to disable)
+            </button>
+          {% else %}
+            <button type="submit" class="sal-btn sal-btn-ghost sal-btn-sm">
+              Disabled (Click to enable)
+            </button>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+
+    <!-- Security & Credentials Overview Card -->
+    <div class="sal-card">
+      <div class="sal-settings-item-header">
+        <div class="sal-settings-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <div>
+          <h3>Account Credentials</h3>
+          <p class="sal-card-sub">Your core authentication account details on Salinto.</p>
+        </div>
+      </div>
+
+      <div class="sal-setting-row">
+        <div>
+          <strong>Username</strong>
+          <p style="margin: 0.2rem 0 0 0; font-size: 0.9rem; color: var(--sal-text);">@{{ user.username }}</p>
+        </div>
+        <span class="sal-tag">Verified Account</span>
+      </div>
+
+      <div class="sal-setting-row">
+        <div>
+          <strong>Primary Email</strong>
+          <p style="margin: 0.2rem 0 0 0; font-size: 0.9rem; color: var(--sal-text);">{{ user.email }}</p>
+        </div>
+      </div>
+
+      <div class="sal-setting-row">
+        <div>
+          <strong>Database Connection</strong>
+          <p style="margin: 0.2rem 0 0 0; font-size: 0.88rem; color: var(--sal-text-muted);">
+            Connected to Supabase PostgreSQL Cluster (aws-1-ap-northeast-1)
+          </p>
+        </div>
+        <span class="sal-badge-status-online">Online</span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

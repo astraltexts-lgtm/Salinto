@@ -1,11 +1,12 @@
 """
 URL configuration for salinto_project.
 
-Each Django app below is a self-contained vertical slice, one per
-required screen:
-  - login/    -> Login screen (and Logout, its natural counterpart)
-  - register/ -> Register screen
-  - home/     -> Home screen
+Self-contained vertical slices:
+  - login/         -> Authentication (Login, Logout)
+  - register/      -> Registration
+  - home/          -> Company directory, search, company details, reviews, salaries, voting
+  - profiles/      -> User profile, followed companies, review management
+  - user_settings/ -> User notification preferences
 """
 from django.contrib import admin
 from django.urls import path, include
@@ -15,4 +16,6 @@ urlpatterns = [
     path('', include('login.urls')),
     path('', include('register.urls')),
     path('', include('home.urls')),
+    path('', include('profiles.urls')),
+    path('', include('user_settings.urls')),
 ]
