@@ -1,62 +1,143 @@
 {% extends "base.html" %}
-{% block title %}Home · Salinto{% endblock %}
+{% block title %}Directory · Salinto Philippine Workplace Transparency{% endblock %}
 
 {% block content %}
-<nav class="sal-navbar">
-  <div class="sal-navbar-brand">Sal<span>into</span></div>
-  <div class="sal-navbar-right">
-    <span>Hi, {{ user.username }}</span>
-    <a href="{% url 'login:logout' %}" class="sal-btn sal-btn-ghost">Log out</a>
-  </div>
-</nav>
+{% include "navbar.html" %}
 
 <section class="sal-hero">
   <div class="sal-hero-inner">
-    <h1>Kumusta, {{ user.username }}!</h1>
-    <p>Search a company to see honest reviews, salary ranges, and employment type breakdowns before you decide.</p>
+    <div class="sal-hero-tag">A clear window into your next workplace</div>
+    <h1>Kumusta, {% if user.profile.display_label %}{{ user.profile.display_label }}{% else %}{{ user.username }}{% endif %}!</h1>
+    <p>Search Philippine workplaces to explore verified reviews, real salary benchmarks, and authentic employment conditions before making career decisions.</p>
 
-    <form method="get" class="sal-search">
-      <input
-        type="text"
-        name="q"
-        class="sal-input"
-        placeholder="Search a company or industry..."
-        value="{{ query }}"
-      >
-      <button type="submit" class="sal-btn sal-btn-primary" style="width: auto; white-space: nowrap;">Search</button>
+    <form method="get" class="sal-search-box">
+      <div class="sal-search-inputs">
+        <div class="sal-search-input-wrap">
+          <svg class="sal-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="text"
+            name="q"
+            class="sal-input sal-search-input"
+            placeholder="Search company name, industry, or location (e.g. Cebu, IT, BPO)..."
+            value="{{ query }}"
+          >
+        </div>
+        <select name="industry" class="sal-input sal-filter-select" onchange="this.form.submit()">
+          <option value="">All Industries</option>
+          {% for ind in industries %}
+            <option value="{{ ind.name }}" {% if selected_industry == ind.name %}selected{% endif %}>
+              {{ ind.name }} ({{ ind.comp_count }})
+            </option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="sal-btn sal-btn-primary sal-search-btn">Find Companies</button>
+      </div>
+
+      {% if query or selected_industry or min_rating %}
+        <div class="sal-active-filters">
+          <span>Active filters:</span>
+          {% if query %}<span class="sal-filter-pill">Keyword: "{{ query }}"</span>{% endif %}
+          {% if selected_industry %}<span class="sal-filter-pill">Industry: {{ selected_industry }}</span>{% endif %}
+          {% if min_rating %}<span class="sal-filter-pill">Min Rating: {{ min_rating }}+</span>{% endif %}
+          <a href="{% url 'home:home' %}" class="sal-clear-filters">&times; Clear all</a>
+        </div>
+      {% endif %}
     </form>
+
+    <!-- Platform Stats Counter -->
+    <div class="sal-stats-strip">
+      <div class="sal-stat-item">
+        <span class="sal-stat-num">{{ total_companies }}</span>
+        <span class="sal-stat-label">Companies</span>
+      </div>
+      <div class="sal-stat-divider"></div>
+      <div class="sal-stat-item">
+        <span class="sal-stat-num">{{ total_reviews }}</span>
+        <span class="sal-stat-label">Verified Reviews</span>
+      </div>
+      <div class="sal-stat-divider"></div>
+      <div class="sal-stat-item">
+        <span class="sal-stat-num">{{ total_salaries }}</span>
+        <span class="sal-stat-label">Salary Reports</span>
+      </div>
+    </div>
   </div>
 </section>
 
 <div class="sal-content">
   <div class="sal-content-heading">
-    <h2>{% if query %}Results for "{{ query }}"{% else %}Recently reviewed companies{% endif %}</h2>
-    <span class="sal-count">{{ total_companies }} companies in Salinto</span>
+    <div>
+      <h2>
+        {% if query %}
+          Search results for "{{ query }}"
+        {% elif selected_industry %}
+          Companies in {{ selected_industry }}
+        {% else %}
+          Featured Philippine Companies
+        {% endif %}
+      </h2>
+      <p class="sal-content-sub">Explore company profiles, workplace culture, and salary ranges</p>
+    </div>
+    <span class="sal-count">{{ companies|length }} of {{ total_companies }} companies shown</span>
   </div>
 
   {% if companies %}
     <div class="sal-company-grid">
       {% for company in companies %}
-        <div class="sal-company-card">
-          <h3>{{ company.name }}</h3>
-          <div class="sal-company-meta">{{ company.industry }} &middot; {{ company.location }}</div>
-          <div class="sal-rating-row">
-            <span class="sal-rating-badge {% if company.rating < 3 %}bad{% elif company.rating < 4 %}warn{% endif %}">
-              {{ company.rating }}
-            </span>
-            <span class="sal-rating-count">{{ company.review_count }} reviews</span>
+        <a href="{% url 'home:company_detail' company.pk %}" class="sal-company-card-link">
+          <div class="sal-company-card">
+            <div class="sal-card-top">
+              <div class="sal-company-avatar">
+                {{ company.name|slice:":2"|upper }}
+              </div>
+              {% if company.id in followed_ids %}
+                <span class="sal-following-badge">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                  Following
+                </span>
+              {% endif %}
+            </div>
+
+            <h3>{{ company.name }}</h3>
+            <div class="sal-company-meta">
+              <span class="sal-meta-ind">{{ company.industry.name }}</span> &bull; 
+              <span class="sal-meta-loc">{{ company.location }}</span>
+            </div>
+
+            <div class="sal-rating-row">
+              <span class="sal-rating-badge {% if company.rating < 3.0 %}bad{% elif company.rating < 4.0 %}warn{% endif %}">
+                ★ {{ company.rating|floatformat:1 }}
+              </span>
+              <span class="sal-rating-count">
+                {{ company.review_count }} review{{ company.review_count|pluralize }}
+              </span>
+              <span class="sal-card-arrow">&rarr;</span>
+            </div>
+
+            <div class="sal-tags">
+              {% for et in company.employment_types.all %}
+                <span class="sal-tag">{{ et.name }}</span>
+              {% empty %}
+                <span class="sal-tag sal-tag-muted">Direct hire</span>
+              {% endfor %}
+            </div>
           </div>
-          <div class="sal-tags">
-            {% for tag in company.employment_types %}
-              <span class="sal-tag">{{ tag }}</span>
-            {% endfor %}
-          </div>
-        </div>
+        </a>
       {% endfor %}
     </div>
   {% else %}
     <div class="sal-empty">
-      No companies match "{{ query }}" yet. Try a different name or industry.
+      <div class="sal-empty-icon">&#128269;</div>
+      <h3>No companies matched your criteria</h3>
+      <p>Try searching for a different keyword, removing filters, or browsing all industries.</p>
+      <a href="{% url 'home:home' %}" class="sal-btn sal-btn-ghost sal-btn-sm" style="display: inline-flex; margin-top: 1rem;">
+        View all companies
+      </a>
     </div>
   {% endif %}
 </div>

@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% block title %}{{ company.name }} Reviews, Salaries & Culture · Salinto{% endblock %}
+
+{% block content %}
+{% include "navbar.html" %}
+
+<div class="sal-detail-header-wrap">
+  <div class="sal-container">
+    <a href="{% url 'home:home' %}" class="sal-back-link">&larr; Back to all companies</a>
+
+    <div class="sal-detail-hero">
+      <div class="sal-detail-hero-left">
+        <div class="sal-detail-avatar">
+          {{ company.name|slice:":2"|upper }}
+        </div>
+        <div class="sal-detail-info">
+          <h1>{{ company.name }}</h1>
+          <div class="sal-detail-meta">
+            <span class="sal-meta-badge">{{ company.industry.name }}</span>
+            <span class="sal-meta-loc">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              {{ company.location }}
+            </span>
+            <span class="sal-meta-followers">
+              {{ followers_count }} follower{{ followers_count|pluralize }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sal-detail-hero-right">
+        <div class="sal-detail-rating-box">
+          <div class="sal-detail-rating-score {% if company.rating < 3.0 %}bad{% elif company.rating < 4.0 %}warn{% endif %}">
+            ★ {{ company.rating|floatformat:1 }}
+          </div>
+          <div class="sal-detail-rating-count">{{ company.review_count }} review{{ company.review_count|pluralize }}</div>
+        </div>
+
+        <form method="post" action="{% url 'home:toggle_follow' company.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          {% if is_following %}
+            <button type="submit" class="sal-btn sal-btn-following">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+              </svg>
+              Following
+            </button>
+          {% else %}
+            <button type="submit" class="sal-btn sal-btn-primary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+              </svg>
+              Follow Company
+            </button>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="sal-tabs">
+      <a href="?tab=reviews" class="sal-tab {% if active_tab == 'reviews' %}active{% endif %}">
+        Reviews ({{ reviews|length }})
+      </a>
+      <a href="?tab=salaries" class="sal-tab {% if active_tab == 'salaries' %}active{% endif %}">
+        Salaries & Pay ({{ salaries|length }})
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="sal-container sal-detail-body">
+  {% if active_tab == 'reviews' %}
+    <!-- REVIEWS TAB -->
+    <div class="sal-split-layout">
+      <!-- Main Column: Reviews List -->
+      <div class="sal-main-col">
+        <div class="sal-section-header">
+          <h2>Community Reviews for {{ company.name }}</h2>
+          <span class="sal-count">{{ reviews|length }} verified submissions</span>
+        </div>
+
+        {% if reviews %}
+          <div class="sal-reviews-list">
+            {% for review in reviews %}
+              <div class="sal-review-card" id="review-{{ review.id }}">
+                <div class="sal-review-header">
+                  <div class="sal-reviewer-wrap">
+                    <div class="sal-user-avatar">
+                      {% if review.user.profile.initials %}
+                        {{ review.user.profile.initials }}
+                      {% else %}
+                        {{ review.user.username|slice:":2"|upper }}
+                      {% endif %}
+                    </div>
+                    <div>
+                      <div class="sal-reviewer-name">
+                        {% if review.user.profile.display_label %}
+                          {{ review.user.profile.display_label }}
+                        {% else %}
+                          {{ review.user.username }}
+                        {% endif %}
+                      </div>
+                      <div class="sal-review-role">
+                        <strong>{{ review.job_title }}</strong>
+                        {% if review.employment_type %} &bull; {{ review.employment_type.name }}{% endif %}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="sal-review-meta-right">
+                    <div class="sal-rating-badge {% if review.rating < 3 %}bad{% elif review.rating < 4 %}warn{% endif %}">
+                      ★ {{ review.rating }}/5
+                    </div>
+                    <span class="sal-review-date">{{ review.created_at|date:"M d, Y" }}</span>
+                  </div>
+                </div>
+
+                <div class="sal-review-comment">
+                  {{ review.comment|linebreaks }}
+                </div>
+
+                <div class="sal-review-footer">
+                  <div class="sal-vote-group">
+                    <span class="sal-vote-label">Was this review helpful?</span>
+                    <form method="post" action="{% url 'home:vote_review' review.pk %}" style="display:inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="is_helpful" value="true">
+                      <button type="submit" class="sal-vote-btn {% if user_votes|default_if_none:''|dictsort:review.id and user_votes.review.id == True %}active{% endif %}">
+                        &#128077; Helpful ({{ review.helpful_count }})
+                      </button>
+                    </form>
+                    <form method="post" action="{% url 'home:vote_review' review.pk %}" style="display:inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="is_helpful" value="false">
+                      <button type="submit" class="sal-vote-btn">
+                        &#128078; ({{ review.unhelpful_count }})
+                      </button>
+                    </form>
+                  </div>
+
+                  <!-- Moderation Flag -->
+                  <details class="sal-report-details">
+                    <summary class="sal-report-link">Report</summary>
+                    <form method="post" action="{% url 'home:flag_review' review.pk %}" class="sal-report-form">
+                      {% csrf_token %}
+                      <p class="sal-report-hint">Report to Salinto moderation queue:</p>
+                      <textarea name="reason" class="sal-input" rows="2" placeholder="Specify violation (spam, confidential info, harassment)..." required></textarea>
+                      <button type="submit" class="sal-btn sal-btn-sm sal-btn-bad">Submit Report</button>
+                    </form>
+                  </details>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="sal-empty">
+            <p>No reviews have been written for {{ company.name }} yet.</p>
+            <p>Be the first employee or alumni to share your experience!</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Side Column: Write a Review Form -->
+      <div class="sal-side-col">
+        <div class="sal-card sal-sticky-card">
+          <h3>Write a Review</h3>
+          <p class="sal-card-sub">Share authentic insights about compensation, work-life balance, and management.</p>
+
+          <form method="post" action="{% url 'home:add_review' company.pk %}">
+            {% csrf_token %}
+            <label class="sal-form-label">Overall Rating</label>
+            {{ review_form.rating }}
+
+            <label class="sal-form-label">Your Job Title / Role</label>
+            {{ review_form.job_title }}
+
+            <label class="sal-form-label">Employment Type</label>
+            {{ review_form.employment_type }}
+
+            <label class="sal-form-label">Your Honest Review</label>
+            {{ review_form.comment }}
+
+            <button type="submit" class="sal-btn sal-btn-primary" style="margin-top: 0.5rem;">
+              Post Review
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  {% elif active_tab == 'salaries' %}
+    <!-- SALARIES TAB -->
+    <div class="sal-split-layout">
+      <!-- Main Column: Salary Insights -->
+      <div class="sal-main-col">
+        <div class="sal-section-header">
+          <h2>Philippine Salary Insights at {{ company.name }}</h2>
+          <span class="sal-count">{{ salaries|length }} reported salaries</span>
+        </div>
+
+        {% if overall_avg_salary %}
+          <div class="sal-salary-summary-banner">
+            <div>
+              <span class="sal-summary-label">Average Monthly Base Pay</span>
+              <div class="sal-summary-value">&#8369;{{ overall_avg_salary|floatformat:0 }} <small>/ month</small></div>
+            </div>
+            <div class="sal-summary-context">
+              Based on {{ salaries|length }} verified salary reports from Salinto members.
+            </div>
+          </div>
+        {% endif %}
+
+        {% if roles_summary %}
+          <h3 class="sal-subheading">Pay by Role</h3>
+          <div class="sal-roles-grid">
+            {% for role in roles_summary %}
+              <div class="sal-role-card">
+                <div>
+                  <div class="sal-role-title">{{ role.job_title }}</div>
+                  <div class="sal-role-count">{{ role.count }} submission{{ role.count|pluralize }}</div>
+                </div>
+                <div class="sal-role-avg">&#8369;{{ role.avg_salary|floatformat:0 }}<small>/mo</small></div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <h3 class="sal-subheading" style="margin-top: 2rem;">Individual Submissions</h3>
+        {% if salaries %}
+          <div class="sal-salaries-table-wrap">
+            <table class="sal-table">
+              <thead>
+                <tr>
+                  <th>Job Title</th>
+                  <th>Employment Type</th>
+                  <th>Monthly Salary</th>
+                  <th>Submitted By</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sal in salaries %}
+                  <tr>
+                    <td><strong>{{ sal.job_title }}</strong></td>
+                    <td>
+                      {% if sal.employment_type %}
+                        <span class="sal-tag">{{ sal.employment_type.name }}</span>
+                      {% else %}
+                        <span class="sal-tag sal-tag-muted">Direct</span>
+                      {% endif %}
+                    </td>
+                    <td class="sal-salary-cell">&#8369;{{ sal.monthly_salary|floatformat:2 }}</td>
+                    <td class="sal-author-cell">
+                      {% if sal.submitted_by %}
+                        {% if sal.submitted_by.profile.display_label %}{{ sal.submitted_by.profile.display_label }}{% else %}{{ sal.submitted_by.username }}{% endif %}
+                      {% else %}
+                        <em>Anonymous Employee</em>
+                      {% endif %}
+                    </td>
+                    <td class="sal-date-cell">{{ sal.created_at|date:"M d, Y" }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="sal-empty">
+            <p>No salary reports submitted yet for {{ company.name }}.</p>
+            <p>Help your peers by contributing your compensation insight below.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Side Column: Add Salary Form -->
+      <div class="sal-side-col">
+        <div class="sal-card sal-sticky-card">
+          <h3>Report a Salary</h3>
+          <p class="sal-card-sub">All salary submissions help provide transparency to job seekers in the Philippines.</p>
+
+          <form method="post" action="{% url 'home:add_salary' company.pk %}">
+            {% csrf_token %}
+            <label class="sal-form-label">Job Title / Role</label>
+            {{ salary_form.job_title }}
+
+            <label class="sal-form-label">Monthly Gross Salary (PHP &#8369;)</label>
+            {{ salary_form.monthly_salary }}
+
+            <label class="sal-form-label">Employment Type</label>
+            {{ salary_form.employment_type }}
+
+            <div class="sal-checkbox-wrap" style="margin: 1rem 0;">
+              {{ salary_form.is_anonymous }}
+              <label for="{{ salary_form.is_anonymous.id_for_label }}">Keep my submission anonymous</label>
+            </div>
+
+            <button type="submit" class="sal-btn sal-btn-primary">
+              Submit Salary Insight
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
