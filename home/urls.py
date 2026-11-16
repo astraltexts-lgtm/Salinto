@@ -6,6 +6,7 @@ app_name = 'home'
 
 urlpatterns = [
     path('', views.home_view, name='home'),
+    path('compare/', views.compare_companies_view, name='compare'),
     path('companies/<int:pk>/', views.company_detail_view, name='company_detail'),
     path('companies/<int:pk>/follow/', views.toggle_follow_view, name='toggle_follow'),
     path('companies/<int:pk>/review/', views.add_review_view, name='add_review'),

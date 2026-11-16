@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.db.models import Avg, Count
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -22,11 +23,12 @@ from .models import (
 def home_view(request):
     """
     Home Screen slice: Philippine workplace transparency directory.
-    Queries Supabase PostgreSQL for companies with search and industry filtering.
+    Queries Supabase PostgreSQL for companies with search, industry filtering, and sorting.
     """
     query = request.GET.get('q', '').strip()
     selected_industry = request.GET.get('industry', '').strip()
     min_rating = request.GET.get('min_rating', '').strip()
+    sort_by = request.GET.get('sort', '-rating').strip()
 
     companies = Company.objects.select_related('industry').prefetch_related('employment_types').all()
 
@@ -47,8 +49,17 @@ def home_view(request):
         except ValueError:
             pass
 
+    # Sort options
+    sort_mapping = {
+        'highest': '-rating',
+        'reviews': '-review_count',
+        'name': 'name',
+        'newest': '-created_at',
+    }
+    companies = companies.order_by(sort_mapping.get(sort_by, '-rating'), '-review_count')
+
     industries = Industry.objects.annotate(comp_count=Count('companies')).filter(comp_count__gt=0)
-    
+
     # Platform statistics
     total_companies = Company.objects.count()
     total_reviews = Review.objects.count()
@@ -64,6 +75,7 @@ def home_view(request):
         'query': query,
         'selected_industry': selected_industry,
         'min_rating': min_rating,
+        'sort_by': sort_by,
         'industries': industries,
         'total_companies': total_companies,
         'total_reviews': total_reviews,
@@ -76,8 +88,8 @@ def home_view(request):
 @login_required(login_url='login:login')
 def company_detail_view(request, pk):
     """
-    Company Detail screen: displays full company profile, reviews,
-    salary entries, and submission forms.
+    Company Detail screen: displays full company profile, ratings distribution,
+    reviews, salary benchmarks, 13th-month estimates, and submission forms.
     """
     company = get_object_or_404(
         Company.objects.select_related('industry').prefetch_related('employment_types'),
@@ -87,8 +99,28 @@ def company_detail_view(request, pk):
     is_following = CompanyFollow.objects.filter(user=request.user, company=company).exists()
     followers_count = company.followers.count()
 
-    # Reviews with user votes
-    reviews = company.reviews.select_related('user', 'user__profile', 'employment_type').all()
+    # Rating distribution breakdown & recommendation rate
+    rating_distribution = company.rating_distribution()
+    recommendation_pct = company.recommendation_percentage()
+    salary_summary = company.salary_summary()
+
+    # Reviews with user votes and sorting
+    reviews_qs = company.reviews.select_related('user', 'user__profile', 'employment_type').all()
+    
+    review_sort = request.GET.get('review_sort', 'newest')
+    rating_filter = request.GET.get('star', '')
+
+    if rating_filter and rating_filter.isdigit():
+        reviews_qs = reviews_qs.filter(rating=int(rating_filter))
+
+    if review_sort == 'highest':
+        reviews_qs = reviews_qs.order_by('-rating', '-created_at')
+    elif review_sort == 'lowest':
+        reviews_qs = reviews_qs.order_by('rating', '-created_at')
+    else:  # newest
+        reviews_qs = reviews_qs.order_by('-created_at')
+
+    reviews = list(reviews_qs)
     user_votes = {
         v.review_id: v.is_helpful
         for v in ReviewVote.objects.filter(user=request.user, review__in=reviews)
@@ -103,8 +135,6 @@ def company_detail_view(request, pk):
         .order_by('-avg_salary')
     )
 
-    overall_avg_salary = company.salary_entries.aggregate(avg=Avg('monthly_salary'))['avg']
-
     active_tab = request.GET.get('tab', 'reviews')
 
     review_form = ReviewForm()
@@ -115,11 +145,15 @@ def company_detail_view(request, pk):
         'company': company,
         'is_following': is_following,
         'followers_count': followers_count,
+        'rating_distribution': rating_distribution,
+        'recommendation_pct': recommendation_pct,
+        'salary_summary': salary_summary,
         'reviews': reviews,
         'user_votes': user_votes,
+        'review_sort': review_sort,
+        'rating_filter': rating_filter,
         'salaries': salaries,
         'roles_summary': roles_summary,
-        'overall_avg_salary': overall_avg_salary,
         'active_tab': active_tab,
         'review_form': review_form,
         'salary_form': salary_form,
@@ -129,17 +163,67 @@ def company_detail_view(request, pk):
 
 
 @login_required(login_url='login:login')
+def compare_companies_view(request):
+    """
+    Workplace Comparison Tool:
+    Allows Philippine job seekers to evaluate two companies side-by-side
+    on compensation, ratings, review volume, and employment terms.
+    """
+    company_id_1 = request.GET.get('c1')
+    company_id_2 = request.GET.get('c2')
+
+    all_companies = Company.objects.all().order_by('name')
+
+    company1 = Company.objects.filter(pk=company_id_1).first() if company_id_1 else None
+    company2 = Company.objects.filter(pk=company_id_2).first() if company_id_2 else None
+
+    # Fallback default pair if none selected
+    if not company1 and all_companies.exists():
+        company1 = all_companies[0]
+    if not company2 and all_companies.count() > 1:
+        company2 = all_companies[1]
+
+    data1 = company1.salary_summary() if company1 else None
+    data2 = company2.salary_summary() if company2 else None
+
+    context = {
+        'all_companies': all_companies,
+        'company1': company1,
+        'company2': company2,
+        'data1': data1,
+        'data2': data2,
+    }
+    return render(request, 'home/compare.html', context)
+
+
+@login_required(login_url='login:login')
 @require_POST
 def toggle_follow_view(request, pk):
-    """Toggles following status for the given company."""
+    """Toggles following status for the given company with AJAX & POST support."""
     company = get_object_or_404(Company, pk=pk)
     follow_obj = CompanyFollow.objects.filter(user=request.user, company=company).first()
+    
     if follow_obj:
         follow_obj.delete()
-        messages.info(request, f'You unfollowed {company.name}.')
+        is_following = False
+        msg = f'You unfollowed {company.name}.'
     else:
         CompanyFollow.objects.create(user=request.user, company=company)
-        messages.success(request, f'You are now following {company.name}!')
+        is_following = True
+        msg = f'You are now following {company.name}!'
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'status': 'ok',
+            'is_following': is_following,
+            'followers_count': company.followers.count(),
+            'message': msg,
+        })
+
+    if is_following:
+        messages.success(request, msg)
+    else:
+        messages.info(request, msg)
 
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER')
     return redirect(next_url or 'home:company_detail', pk=pk)
@@ -156,7 +240,7 @@ def add_review_view(request, pk):
         review.user = request.user
         review.company = company
         review.save()
-        messages.success(request, 'Thank you! Your workplace review has been published.')
+        messages.success(request, 'Salamat! Your workplace review has been published.')
     else:
         messages.error(request, 'Could not post review. Please check the fields and try again.')
 
@@ -187,19 +271,31 @@ def add_salary_view(request, pk):
 @login_required(login_url='login:login')
 @require_POST
 def vote_review_view(request, pk):
-    """Records whether a user found a review helpful or not."""
+    """Records helpful/unhelpful votes with AJAX & standard POST support."""
     review = get_object_or_404(Review, pk=pk)
     is_helpful = request.POST.get('is_helpful', 'true').lower() in ('true', '1')
 
     vote = ReviewVote.objects.filter(user=request.user, review=review).first()
+    user_state = None
     if vote:
         if vote.is_helpful == is_helpful:
             vote.delete()  # toggle off
+            user_state = None
         else:
             vote.is_helpful = is_helpful
             vote.save()
+            user_state = is_helpful
     else:
         ReviewVote.objects.create(user=request.user, review=review, is_helpful=is_helpful)
+        user_state = is_helpful
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'status': 'ok',
+            'helpful_count': review.helpful_count(),
+            'unhelpful_count': review.unhelpful_count(),
+            'user_vote': user_state,
+        })
 
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER')
     return redirect(next_url or 'home:company_detail', pk=review.company_id)
@@ -217,7 +313,7 @@ def flag_review_view(request, pk):
         flag.reported_by = request.user
         flag.status = ModerationFlag.STATUS_PENDING
         flag.save()
-        messages.info(request, 'Review flagged for moderator review. Thank you for keeping Salinto safe.')
+        messages.info(request, 'Review submitted to moderation queue. Thank you for keeping Salinto authentic.')
     else:
         messages.error(request, 'Could not submit report. Please specify a reason.')
 

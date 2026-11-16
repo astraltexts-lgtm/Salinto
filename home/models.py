@@ -83,6 +83,48 @@ class Company(models.Model):
             self.rating = 0
         self.save(update_fields=['rating', 'review_count'])
 
+    def rating_distribution(self):
+        """Returns the distribution and percentage of 1 to 5 star ratings."""
+        counts = {i: 0 for i in range(1, 6)}
+        reviews = self.reviews.all()
+        total = reviews.count()
+        for r in reviews:
+            if 1 <= r.rating <= 5:
+                counts[r.rating] += 1
+        return [
+            {
+                'star': i,
+                'count': counts[i],
+                'pct': round((counts[i] / total) * 100) if total > 0 else 0,
+            }
+            for i in range(5, 0, -1)
+        ]
+
+    def recommendation_percentage(self):
+        """Calculates percentage of ratings that are 4 or 5 stars."""
+        total = self.reviews.count()
+        if total == 0:
+            return 0
+        positive = self.reviews.filter(rating__gte=4).count()
+        return round((positive / total) * 100)
+
+    def salary_summary(self):
+        """Calculates min, max, average and Philippine 13th-month annual estimate."""
+        from django.db.models import Min, Max, Avg
+        agg = self.salary_entries.aggregate(
+            min_salary=Min('monthly_salary'),
+            max_salary=Max('monthly_salary'),
+            avg_salary=Avg('monthly_salary'),
+        )
+        avg = agg['avg_salary'] or 0
+        return {
+            'min': agg['min_salary'],
+            'max': agg['max_salary'],
+            'avg': avg,
+            'annual_13th_month': avg * 13,
+            'count': self.salary_entries.count(),
+        }
+
 
 class CompanyEmploymentType(models.Model):
     """Join table between Company and EmploymentType (many-to-many)."""
