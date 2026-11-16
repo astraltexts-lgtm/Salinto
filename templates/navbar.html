@@ -10,9 +10,19 @@
     Sal<span>into</span>
   </a>
 
-  <div class="sal-navbar-links">
+  <!-- Mobile hamburger -->
+  <button class="sal-nav-toggle" id="sal-nav-toggle" aria-expanded="false" aria-controls="sal-nav-menu" aria-label="Open navigation">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
+
+  <div class="sal-navbar-links sal-nav-menu" id="sal-nav-menu" role="navigation">
     <a href="{% url 'home:home' %}" class="sal-nav-link {% if request.resolver_match.app_name == 'home' and request.resolver_match.url_name == 'home' %}active{% endif %}">
       Directory
+    </a>
+    <a href="{% url 'home:compare' %}" class="sal-nav-link {% if request.resolver_match.app_name == 'home' and request.resolver_match.url_name == 'compare' %}active{% endif %}">
+      Compare
     </a>
     <a href="{% url 'profiles:profile' %}" class="sal-nav-link {% if request.resolver_match.app_name == 'profiles' %}active{% endif %}">
       My Profile

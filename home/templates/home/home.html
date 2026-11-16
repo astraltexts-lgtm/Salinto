@@ -84,6 +84,29 @@
     <span class="sal-count">{{ companies|length }} of {{ total_companies }} companies shown</span>
   </div>
 
+  <!-- Sort Controls -->
+  <div class="sal-sort-row">
+    <span class="sal-sort-label">Sort by:</span>
+    <div class="sal-sort-pills">
+      <a href="?q={{ query }}&industry={{ selected_industry }}&sort=highest"
+         class="sal-sort-pill {% if sort_by == 'highest' or not sort_by %}active{% endif %}">
+        ★ Highest Rated
+      </a>
+      <a href="?q={{ query }}&industry={{ selected_industry }}&sort=reviews"
+         class="sal-sort-pill {% if sort_by == 'reviews' %}active{% endif %}">
+        Most Reviews
+      </a>
+      <a href="?q={{ query }}&industry={{ selected_industry }}&sort=name"
+         class="sal-sort-pill {% if sort_by == 'name' %}active{% endif %}">
+        A–Z
+      </a>
+      <a href="?q={{ query }}&industry={{ selected_industry }}&sort=newest"
+         class="sal-sort-pill {% if sort_by == 'newest' %}active{% endif %}">
+        Newest
+      </a>
+    </div>
+  </div>
+
   {% if companies %}
     <div class="sal-company-grid">
       {% for company in companies %}

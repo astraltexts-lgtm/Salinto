@@ -13,13 +13,19 @@
 </head>
 <body>
   {% if messages %}
-    <div class="sal-messages">
+    <div class="sal-messages" role="status" aria-live="polite">
       {% for message in messages %}
-        <div class="sal-message">{{ message }}</div>
+        <div class="sal-message sal-message--{{ message.tags|default:'info' }}" tabindex="0">
+          <span class="sal-message-text">{{ message }}</span>
+          <button class="sal-message-close" aria-label="Dismiss" onclick="this.parentElement.remove()">&times;</button>
+        </div>
       {% endfor %}
     </div>
   {% endif %}
 
   {% block content %}{% endblock %}
+
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

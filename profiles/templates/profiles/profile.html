@@ -5,6 +5,25 @@
 {% include "navbar.html" %}
 
 <div class="sal-container sal-profile-page">
+
+  <!-- Quick Stats Banner -->
+  <div class="sal-profile-stats-banner">
+    <div class="sal-pstat">
+      <span class="sal-pstat-num">{{ user_reviews|length }}</span>
+      <span class="sal-pstat-label">Review{{ user_reviews|length|pluralize }} Written</span>
+    </div>
+    <div class="sal-pstat-divider"></div>
+    <div class="sal-pstat">
+      <span class="sal-pstat-num">{{ followed_companies|length }}</span>
+      <span class="sal-pstat-label">Compan{{ followed_companies|length|pluralize:"y,ies" }} Followed</span>
+    </div>
+    <div class="sal-pstat-divider"></div>
+    <div class="sal-pstat">
+      <span class="sal-pstat-num">{{ user_salaries|length }}</span>
+      <span class="sal-pstat-label">Salary Report{{ user_salaries|length|pluralize }}</span>
+    </div>
+  </div>
+
   <div class="sal-profile-grid">
     <!-- Left Column: User Card & Profile Editor -->
     <div class="sal-profile-sidebar">
@@ -82,7 +101,15 @@
       {% if followed_companies %}
         <div class="sal-company-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
           {% for company in followed_companies %}
-            <div class="sal-company-card">
+            <div class="sal-company-card sal-company-card--followed">
+              <a href="{% url 'home:company_detail' company.pk %}" class="sal-card-cover-link" aria-label="View {{ company.name }}"></a>
+              <div class="sal-card-top">
+                <div class="sal-company-avatar">{{ company.name|slice:":2"|upper }}</div>
+                <span class="sal-following-badge">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  Following
+                </span>
+              </div>
               <h3>{{ company.name }}</h3>
               <div class="sal-company-meta">{{ company.industry.name }} &bull; {{ company.location }}</div>
               <div class="sal-rating-row">
@@ -91,10 +118,7 @@
                 </span>
                 <span class="sal-rating-count">{{ company.review_count }} review{{ company.review_count|pluralize }}</span>
               </div>
-              <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                <a href="{% url 'home:company_detail' company.pk %}" class="sal-btn sal-btn-ghost sal-btn-sm" style="flex: 1;">
-                  View
-                </a>
+              <div style="margin-top: 1rem; display: flex; gap: 0.5rem; position: relative; z-index: 1;">
                 <form method="post" action="{% url 'home:toggle_follow' company.pk %}">
                   {% csrf_token %}
                   <input type="hidden" name="next" value="{% url 'profiles:profile' %}">

@@ -14,31 +14,73 @@
       </div>
       <div class="sal-wordmark">Sal<span>into</span></div>
       <p class="sal-tagline">A clear window into your next workplace. Read honest reviews before you say yes to that offer.</p>
+
+      <!-- Trust signals -->
+      <div class="sal-auth-trust">
+        <div class="sal-trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Your identity stays private</span>
+        </div>
+        <div class="sal-trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Real reviews, verified employees</span>
+        </div>
+        <div class="sal-trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Free for all Filipino workers</span>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="sal-auth-form-side">
     <div class="sal-auth-card">
+      <div class="sal-auth-logo-mobile">
+        <div class="sal-wordmark sal-wordmark--sm">Sal<span>into</span></div>
+      </div>
+
       <h1>Welcome back</h1>
       <p class="sal-subhead">Log in to keep browsing company reviews and salary insights.</p>
 
-      <form method="post" novalidate>
+      <form method="post" novalidate class="sal-auth-form">
         {% csrf_token %}
+
         {% if form.non_field_errors %}
-          <div class="sal-error">{{ form.non_field_errors.0 }}</div>
+          <div class="sal-error sal-error--banner" role="alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            {{ form.non_field_errors.0 }}
+          </div>
         {% endif %}
 
-        {{ form.username }}
-        {% if form.username.errors %}<div class="sal-field-error">{{ form.username.errors.0 }}</div>{% endif %}
+        <div class="sal-form-group {% if form.username.errors %}has-error{% endif %}">
+          <label class="sal-form-label" for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="sal-field-error">{{ form.username.errors.0 }}</div>
+          {% endif %}
+        </div>
 
-        {{ form.password }}
-        {% if form.password.errors %}<div class="sal-field-error">{{ form.password.errors.0 }}</div>{% endif %}
+        <div class="sal-form-group {% if form.password.errors %}has-error{% endif %}">
+          <div class="sal-label-row">
+            <label class="sal-form-label" for="{{ form.password.id_for_label }}">Password</label>
+          </div>
+          <div class="sal-pw-wrap">
+            {{ form.password }}
+            <button type="button" class="sal-pw-toggle" data-target="#{{ form.password.id_for_label }}" aria-pressed="false">Show</button>
+          </div>
+          {% if form.password.errors %}
+            <div class="sal-field-error">{{ form.password.errors.0 }}</div>
+          {% endif %}
+        </div>
 
-        <button type="submit" class="sal-btn sal-btn-primary">Log in</button>
+        <button type="submit" class="sal-btn sal-btn-primary sal-btn-block">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Log in
+        </button>
       </form>
 
       <p class="sal-auth-switch">
-        New to Salinto? <a href="{% url 'register:register' %}">Create an account</a>
+        New to Salinto? <a href="{% url 'register:register' %}">Create a free account</a>
       </p>
     </div>
   </div>
