@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Create account · Salinto{% endblock %}
+
+{% block content %}
+<div class="sal-auth">
+  <div class="sal-auth-glass">
+    <div class="sal-auth-glass-content">
+      <div class="sal-window">
+        <div class="sal-window-glow"></div>
+        <div class="sal-window-grid">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="sal-wordmark">Sal<span>into</span></div>
+      <p class="sal-tagline">Make smart employment decisions. Join Filipino workers sharing what it's really like to work somewhere.</p>
+    </div>
+  </div>
+
+  <div class="sal-auth-form-side">
+    <div class="sal-auth-card">
+      <h1>Create your account</h1>
+      <p class="sal-subhead">It only takes a minute, and your identity stays anonymous when you post a review.</p>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="sal-error">{{ form.non_field_errors.0 }}</div>
+        {% endif %}
+
+        {{ form.username }}
+        {% if form.username.errors %}<div class="sal-field-error">{{ form.username.errors.0 }}</div>{% endif %}
+
+        {{ form.email }}
+        {% if form.email.errors %}<div class="sal-field-error">{{ form.email.errors.0 }}</div>{% endif %}
+
+        {{ form.password1 }}
+        {% if form.password1.errors %}<div class="sal-field-error">{{ form.password1.errors.0 }}</div>{% endif %}
+
+        {{ form.password2 }}
+        {% if form.password2.errors %}<div class="sal-field-error">{{ form.password2.errors.0 }}</div>{% endif %}
+
+        <button type="submit" class="sal-btn sal-btn-primary">Create account</button>
+      </form>
+
+      <p class="sal-auth-switch">
+        Already have an account? <a href="{% url 'login:login' %}">Log in</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Home · Salinto{% endblock %}
+
+{% block content %}
+<nav class="sal-navbar">
+  <div class="sal-navbar-brand">Sal<span>into</span></div>
+  <div class="sal-navbar-right">
+    <span>Hi, {{ user.username }}</span>
+    <a href="{% url 'login:logout' %}" class="sal-btn sal-btn-ghost">Log out</a>
+  </div>
+</nav>
+
+<section class="sal-hero">
+  <div class="sal-hero-inner">
+    <h1>Kumusta, {{ user.username }}!</h1>
+    <p>Search a company to see honest reviews, salary ranges, and employment type breakdowns before you decide.</p>
+
+    <form method="get" class="sal-search">
+      <input
+        type="text"
+        name="q"
+        class="sal-input"
+        placeholder="Search a company or industry..."
+        value="{{ query }}"
+      >
+      <button type="submit" class="sal-btn sal-btn-primary" style="width: auto; white-space: nowrap;">Search</button>
+    </form>
+  </div>
+</section>
+
+<div class="sal-content">
+  <div class="sal-content-heading">
+    <h2>{% if query %}Results for "{{ query }}"{% else %}Recently reviewed companies{% endif %}</h2>
+    <span class="sal-count">{{ total_companies }} companies in Salinto</span>
+  </div>
+
+  {% if companies %}
+    <div class="sal-company-grid">
+      {% for company in companies %}
+        <div class="sal-company-card">
+          <h3>{{ company.name }}</h3>
+          <div class="sal-company-meta">{{ company.industry }} &middot; {{ company.location }}</div>
+          <div class="sal-rating-row">
+            <span class="sal-rating-badge {% if company.rating < 3 %}bad{% elif company.rating < 4 %}warn{% endif %}">
+              {{ company.rating }}
+            </span>
+            <span class="sal-rating-count">{{ company.review_count }} reviews</span>
+          </div>
+          <div class="sal-tags">
+            {% for tag in company.employment_types %}
+              <span class="sal-tag">{{ tag }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="sal-empty">
+      No companies match "{{ query }}" yet. Try a different name or industry.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

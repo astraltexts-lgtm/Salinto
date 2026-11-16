@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Log in · Salinto{% endblock %}
+
+{% block content %}
+<div class="sal-auth">
+  <div class="sal-auth-glass">
+    <div class="sal-auth-glass-content">
+      <div class="sal-window">
+        <div class="sal-window-glow"></div>
+        <div class="sal-window-grid">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="sal-wordmark">Sal<span>into</span></div>
+      <p class="sal-tagline">A clear window into your next workplace. Read honest reviews before you say yes to that offer.</p>
+    </div>
+  </div>
+
+  <div class="sal-auth-form-side">
+    <div class="sal-auth-card">
+      <h1>Welcome back</h1>
+      <p class="sal-subhead">Log in to keep browsing company reviews and salary insights.</p>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="sal-error">{{ form.non_field_errors.0 }}</div>
+        {% endif %}
+
+        {{ form.username }}
+        {% if form.username.errors %}<div class="sal-field-error">{{ form.username.errors.0 }}</div>{% endif %}
+
+        {{ form.password }}
+        {% if form.password.errors %}<div class="sal-field-error">{{ form.password.errors.0 }}</div>{% endif %}
+
+        <button type="submit" class="sal-btn sal-btn-primary">Log in</button>
+      </form>
+
+      <p class="sal-auth-switch">
+        New to Salinto? <a href="{% url 'register:register' %}">Create an account</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

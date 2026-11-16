@@ -1,0 +1,509 @@
+/* =========================================================
+   Salinto Design Tokens (v2 — light palette redesign)
+   Concept: warm daylight passing through a paned glass door.
+   Grounded in "salaming pinto" literally: a window-pane grid
+   with mullions, not an abstract glass effect.
+   ========================================================= */
+
+:root {
+  /* Color — light, warm, one accent only */
+  --sal-bg: #f2efe8;
+  --sal-surface: #fdfcf9;
+  --sal-surface-sunken: #ece8df;
+  --sal-border: rgba(42, 36, 26, 0.10);
+  --sal-border-strong: rgba(42, 36, 26, 0.16);
+  --sal-accent: #e0923c;
+  --sal-accent-deep: #c67a2b;
+  --sal-accent-tint: rgba(224, 146, 60, 0.14);
+  --sal-text: #2a2620;
+  --sal-text-muted: #756e61;
+  --sal-good: #4c8f68;
+  --sal-warn: #c68a2b;
+  --sal-bad: #b8563a;
+  --sal-shadow-tint: 42, 36, 26;
+
+  /* Type */
+  --sal-font-display: 'Outfit', 'Segoe UI', sans-serif;
+  --sal-font-body: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+
+  /* Shape — deliberately varied, not uniform */
+  --sal-radius-sm: 8px;
+  --sal-radius-md: 14px;
+  --sal-radius-lg: 22px;
+  --sal-radius-xl: 30px;
+  --sal-shadow-card: 0 10px 28px rgba(var(--sal-shadow-tint), 0.10);
+  --sal-shadow-raised: 0 16px 36px rgba(var(--sal-shadow-tint), 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--sal-bg);
+  color: var(--sal-text);
+  font-family: var(--sal-font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--sal-font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4em 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0 0 1em 0;
+  color: var(--sal-text-muted);
+  max-width: 60ch;
+}
+
+a {
+  color: var(--sal-accent-deep);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button, input {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--sal-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================================
+   Buttons & Inputs
+   ========================================================= */
+
+.sal-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--sal-radius-sm);
+  border: 1px solid var(--sal-border);
+  background: var(--sal-surface);
+  color: var(--sal-text);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sal-input::placeholder {
+  color: var(--sal-text-muted);
+}
+
+.sal-input:focus {
+  border-color: var(--sal-accent);
+  box-shadow: 0 0 0 3px var(--sal-accent-tint);
+}
+
+.sal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.4rem;
+  border-radius: var(--sal-radius-sm);
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: transform 0.12s cubic-bezier(0.32, 0.72, 0, 1), background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sal-btn:hover {
+  text-decoration: none;
+}
+
+.sal-btn:active {
+  transform: scale(0.98);
+}
+
+.sal-btn-primary {
+  background: var(--sal-accent);
+  color: #2a1c0a;
+  width: 100%;
+  box-shadow: 0 6px 18px rgba(224, 146, 60, 0.28);
+}
+
+.sal-btn-primary:hover {
+  background: var(--sal-accent-deep);
+  box-shadow: 0 8px 22px rgba(224, 146, 60, 0.34);
+}
+
+.sal-btn-ghost {
+  background: transparent;
+  color: var(--sal-text);
+  border: 1px solid var(--sal-border-strong);
+}
+
+.sal-btn-ghost:hover {
+  border-color: var(--sal-accent);
+  color: var(--sal-accent-deep);
+}
+
+.sal-error {
+  color: var(--sal-bad);
+  font-size: 0.85rem;
+  margin: -0.5rem 0 1rem 0;
+}
+
+.sal-field-error {
+  color: var(--sal-bad);
+  font-size: 0.8rem;
+  margin: -0.75rem 0 0.75rem 0;
+}
+
+/* =========================================================
+   Messages (Django messages framework)
+   ========================================================= */
+
+.sal-messages {
+  max-width: 480px;
+  margin: 0 auto 1rem auto;
+  padding: 0 1.5rem;
+}
+
+.sal-message {
+  background: var(--sal-surface);
+  border: 1px solid var(--sal-border);
+  border-left: 3px solid var(--sal-accent);
+  border-radius: var(--sal-radius-sm);
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.6rem;
+  color: var(--sal-text-muted);
+}
+
+/* =========================================================
+   Auth screens: split layout, literal window-pane motif
+   ========================================================= */
+
+.sal-auth {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+}
+
+.sal-auth-glass {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+  background: var(--sal-surface-sunken);
+}
+
+/* A literal paned window: mullion grid with warm light glowing
+   through the panes. This is the one deliberate, bold element
+   in the whole app; everything else stays quiet. */
+.sal-window {
+  position: relative;
+  width: 300px;
+  height: 360px;
+  margin-bottom: 2.4rem;
+}
+
+.sal-window-glow {
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(circle at 35% 30%, rgba(224, 146, 60, 0.32), transparent 62%);
+  filter: blur(4px);
+  z-index: 0;
+}
+
+.sal-window-grid {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--sal-radius-lg);
+  background: rgba(42, 36, 26, 0.9);
+  box-shadow: var(--sal-shadow-raised);
+}
+
+.sal-window-grid span {
+  display: block;
+  border-radius: var(--sal-radius-sm);
+  background: linear-gradient(155deg, rgba(255, 227, 179, 0.85), rgba(224, 146, 60, 0.55));
+}
+
+.sal-window-grid span:nth-child(2) { background: linear-gradient(155deg, rgba(255, 227, 179, 0.95), rgba(224, 146, 60, 0.7)); }
+.sal-window-grid span:nth-child(5) { background: linear-gradient(155deg, rgba(255, 227, 179, 0.65), rgba(224, 146, 60, 0.4)); }
+
+.sal-auth-glass-content {
+  position: relative;
+  z-index: 1;
+}
+
+.sal-wordmark {
+  font-family: var(--sal-font-display);
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--sal-text);
+  margin-bottom: 0.6rem;
+}
+
+.sal-wordmark span {
+  color: var(--sal-accent-deep);
+}
+
+.sal-tagline {
+  font-size: 1.05rem;
+  color: var(--sal-text-muted);
+  max-width: 34ch;
+}
+
+.sal-auth-form-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+  background: var(--sal-surface);
+}
+
+.sal-auth-card {
+  width: 100%;
+  max-width: 380px;
+}
+
+.sal-auth-card h1 {
+  font-size: 1.7rem;
+}
+
+.sal-auth-card .sal-subhead {
+  color: var(--sal-text-muted);
+  margin-bottom: 1.6rem;
+  font-size: 0.92rem;
+}
+
+.sal-auth-switch {
+  margin-top: 1.4rem;
+  font-size: 0.9rem;
+  color: var(--sal-text-muted);
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .sal-auth {
+    grid-template-columns: 1fr;
+  }
+  .sal-auth-glass {
+    padding: 2.5rem 2rem;
+    min-height: 200px;
+    align-items: center;
+  }
+  .sal-window {
+    width: 160px;
+    height: 190px;
+    margin-bottom: 1.4rem;
+  }
+  .sal-wordmark {
+    font-size: 1.9rem;
+  }
+  .sal-tagline {
+    display: none;
+  }
+}
+
+/* =========================================================
+   App shell (navbar) used on Home screen
+   ========================================================= */
+
+.sal-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 2rem;
+  border-bottom: 1px solid var(--sal-border);
+  background: var(--sal-surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.sal-navbar-brand {
+  font-family: var(--sal-font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: -0.01em;
+  color: var(--sal-text);
+}
+
+.sal-navbar-brand span {
+  color: var(--sal-accent-deep);
+}
+
+.sal-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--sal-text-muted);
+}
+
+/* =========================================================
+   Home screen
+   ========================================================= */
+
+.sal-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 4.5rem 2rem 4rem 2rem;
+  background: var(--sal-surface-sunken);
+  border-bottom: 1px solid var(--sal-border);
+}
+
+.sal-hero-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.sal-hero h1 {
+  font-size: 2.1rem;
+}
+
+.sal-search {
+  display: flex;
+  gap: 0.6rem;
+  max-width: 480px;
+  margin: 1.8rem auto 0 auto;
+}
+
+.sal-search .sal-input {
+  margin-bottom: 0;
+}
+
+.sal-content {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem 2rem;
+}
+
+.sal-content-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.4rem;
+}
+
+.sal-content-heading h2 {
+  font-size: 1.3rem;
+  margin-bottom: 0;
+}
+
+.sal-content-heading .sal-count {
+  font-size: 0.85rem;
+  color: var(--sal-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.sal-company-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.2rem;
+}
+
+.sal-company-card {
+  background: var(--sal-surface);
+  border: 1px solid var(--sal-border);
+  border-radius: var(--sal-radius-xl);
+  padding: 1.4rem;
+  transition: box-shadow 0.18s ease, transform 0.18s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.sal-company-card:hover {
+  box-shadow: var(--sal-shadow-card);
+  transform: translateY(-2px);
+}
+
+.sal-company-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.2rem;
+}
+
+.sal-company-meta {
+  font-size: 0.82rem;
+  color: var(--sal-text-muted);
+  margin-bottom: 0.9rem;
+}
+
+.sal-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.sal-rating-badge {
+  font-family: var(--sal-font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  background: var(--sal-good);
+  border-radius: var(--sal-radius-sm);
+  padding: 0.15rem 0.55rem;
+}
+
+.sal-rating-badge.warn { background: var(--sal-warn); }
+.sal-rating-badge.bad  { background: var(--sal-bad); }
+
+.sal-rating-count {
+  font-size: 0.82rem;
+  color: var(--sal-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.sal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sal-tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--sal-border);
+  color: var(--sal-text-muted);
+}
+
+.sal-empty {
+  text-align: center;
+  color: var(--sal-text-muted);
+  padding: 3rem 1rem;
+  border: 1px dashed var(--sal-border-strong);
+  border-radius: var(--sal-radius-lg);
+}
