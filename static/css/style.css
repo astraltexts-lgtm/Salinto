@@ -2361,7 +2361,7 @@ html.js .sal-reveal.is-visible {
   transform: translateY(0);
 }
 
-html.js .sal-reveal-s {
+html.js .sal-reveal.sal-reveal-s {
   transform: translateY(12px);
   transition-duration: 0.5s;
 }

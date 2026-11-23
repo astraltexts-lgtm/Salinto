@@ -168,8 +168,15 @@ document.addEventListener('DOMContentLoaded', function () {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
+          var el = entry.target;
+          el.classList.add('is-visible');
+          io.unobserve(el);
+          // Drop the reveal hooks after the entrance so hover
+          // transforms on the same element are not overridden
+          setTimeout(function () {
+            el.classList.remove('sal-reveal', 'sal-reveal-s', 'is-visible');
+            el.style.removeProperty('--sal-reveal-delay');
+          }, 1600);
         }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
