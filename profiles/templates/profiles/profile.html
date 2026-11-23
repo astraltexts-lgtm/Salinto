@@ -7,7 +7,7 @@
 <div class="sal-container sal-profile-page">
 
   <!-- Quick Stats Banner -->
-  <div class="sal-profile-stats-banner">
+  <div class="sal-profile-stats-banner sal-reveal">
     <div class="sal-pstat">
       <span class="sal-pstat-num">{{ user_reviews|length }}</span>
       <span class="sal-pstat-label">Review{{ user_reviews|length|pluralize }} Written</span>
@@ -27,7 +27,7 @@
   <div class="sal-profile-grid">
     <!-- Left Column: User Card & Profile Editor -->
     <div class="sal-profile-sidebar">
-      <div class="sal-card sal-user-summary-card">
+      <div class="sal-card sal-user-summary-card sal-reveal">
         <div class="sal-profile-avatar-lg">
           {% if profile.initials %}{{ profile.initials }}{% else %}{{ user.username|slice:":2"|upper }}{% endif %}
         </div>
@@ -68,7 +68,7 @@
       </div>
 
       <!-- Edit Profile Card -->
-      <div class="sal-card" style="margin-top: 1.5rem;">
+      <div class="sal-card sal-reveal" style="margin-top: 1.5rem;">
         <h3>Edit Profile Details</h3>
         <p class="sal-card-sub">Update how your name and details appear across Salinto.</p>
 
@@ -93,7 +93,7 @@
     <!-- Right Column: Activity (Followed Companies, Reviews, Salaries) -->
     <div class="sal-profile-content">
       <!-- Followed Companies Section -->
-      <div class="sal-section-header">
+      <div class="sal-section-header sal-reveal sal-reveal-s">
         <h2>Companies You Follow</h2>
         <span class="sal-count">{{ followed_companies|length }} company{{ followed_companies|length|pluralize:"ies" }}</span>
       </div>
@@ -101,7 +101,7 @@
       {% if followed_companies %}
         <div class="sal-company-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
           {% for company in followed_companies %}
-            <div class="sal-company-card sal-company-card--followed">
+            <div class="sal-company-card sal-company-card--followed sal-reveal">
               <a href="{% url 'home:company_detail' company.pk %}" class="sal-card-cover-link" aria-label="View {{ company.name }}"></a>
               <div class="sal-card-top">
                 <div class="sal-company-avatar">{{ company.name|slice:":2"|upper }}</div>
@@ -140,7 +140,7 @@
       {% endif %}
 
       <!-- Your Reviews Section -->
-      <div class="sal-section-header" style="margin-top: 3rem;">
+      <div class="sal-section-header sal-reveal sal-reveal-s" style="margin-top: 3rem;">
         <h2>Your Workplace Reviews</h2>
         <span class="sal-count">{{ user_reviews|length }} review{{ user_reviews|length|pluralize }}</span>
       </div>
@@ -148,7 +148,7 @@
       {% if user_reviews %}
         <div class="sal-reviews-list">
           {% for review in user_reviews %}
-            <div class="sal-review-card">
+            <div class="sal-review-card sal-reveal">
               <div class="sal-review-header">
                 <div>
                   <h3 style="margin-bottom: 0.2rem;">
@@ -192,13 +192,13 @@
       {% endif %}
 
       <!-- Your Reported Salaries Section -->
-      <div class="sal-section-header" style="margin-top: 3rem;">
+      <div class="sal-section-header sal-reveal sal-reveal-s" style="margin-top: 3rem;">
         <h2>Your Reported Salaries</h2>
         <span class="sal-count">{{ user_salaries|length }} submission{{ user_salaries|length|pluralize }}</span>
       </div>
 
       {% if user_salaries %}
-        <div class="sal-salaries-table-wrap">
+        <div class="sal-salaries-table-wrap sal-reveal">
           <table class="sal-table">
             <thead>
               <tr>
