@@ -104,7 +104,7 @@
     }
 
     var labels = ['Too short', 'Weak', 'Fair', 'Good', 'Strong', 'Very strong'];
-    var colors = ['#b8563a', '#c68a2b', '#c68a2b', '#4c8f68', '#2b6e48', '#1a4a2f'];
+    var colors = ['#b04426', '#a86a12', '#a86a12', '#1f7a4d', '#186a43', '#14532d'];
 
     field.addEventListener('input', function () {
       var s = score(field.value);
@@ -124,3 +124,148 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+
+/* =========================================================
+   Motion layer — scroll reveal, count-up, navbar state
+   ========================================================= */
+
+/* ---- Sticky navbar gets a shadow once the page scrolls ---- */
+(function () {
+  var navbar = document.querySelector('.sal-navbar');
+  if (!navbar) return;
+
+  function onScroll() {
+    navbar.classList.toggle('sal-navbar--scrolled', window.scrollY > 8);
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+})();
+
+/* ---- Reveal-on-scroll with per-row stagger ----
+   Elements carry .sal-reveal; html.js (set in <head>) hides
+   them so there is no flash when JS is disabled. */
+(function () {
+  document.addEventListener('DOMContentLoaded', function () {
+    var targets = Array.prototype.slice.call(document.querySelectorAll('.sal-reveal'));
+    if (!targets.length) return;
+
+    // Stagger siblings inside the same parent (card grids, lists)
+    var seen = new Map();
+    targets.forEach(function (el) {
+      var parent = el.parentElement;
+      var i = seen.get(parent) || 0;
+      seen.set(parent, i + 1);
+      if (!el.style.getPropertyValue('--sal-reveal-delay')) {
+        el.style.setProperty('--sal-reveal-delay', Math.min(i, 7) * 0.07 + 's');
+      }
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    targets.forEach(function (el) { io.observe(el); });
+  });
+})();
+
+/* ---- Count-up for hero / profile stat numbers ---- */
+(function () {
+  function animateCount(el) {
+    var raw = (el.textContent || '').trim();
+    var match = raw.match(/([^\d]*)([\d][\d,.]*)(.*)/);
+    if (!match) return;
+
+    var prefix = match[1];
+    var numStr = match[2];
+    var suffix = match[3];
+    var target = parseFloat(numStr.replace(/,/g, ''));
+    if (isNaN(target)) return;
+
+    var grouped = numStr.indexOf(',') !== -1;
+    var decimals = (numStr.split('.')[1] || '').length;
+    var duration = 1400;
+    var start = null;
+
+    function frame(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3); // expo-out feel
+      var val = target * eased;
+      var out = grouped
+        ? Math.round(val).toLocaleString('en-US')
+        : val.toFixed(decimals);
+      el.textContent = prefix + out + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var nums = document.querySelectorAll('.sal-stat-num, .sal-pstat-num');
+    if (!nums.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          animateCount(entry.target);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.6 });
+    nums.forEach(function (el) { io.observe(el); });
+  });
+})();
+
+/* ---- Rating distribution bars grow when scrolled into view ---- */
+(function () {
+  document.addEventListener('DOMContentLoaded', function () {
+    var fills = Array.prototype.slice.call(document.querySelectorAll('.sal-dist-bar-fill'));
+    if (!fills.length || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var finals = fills.map(function (el) { return el.style.width; });
+    fills.forEach(function (el) { el.style.width = '0%'; });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var idx = fills.indexOf(entry.target);
+        if (idx === -1) { io.unobserve(entry.target); return; }
+        setTimeout(function () { entry.target.style.width = finals[idx] || '0%'; }, 80);
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.4 });
+    fills.forEach(function (el) { io.observe(el); });
+  });
+})();
+
+/* ---- Vote counters pop when AJAX updates them ---- */
+(function () {
+  function bump(el) {
+    el.classList.add('bump');
+    setTimeout(function () { el.classList.remove('bump'); }, 350);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!('MutationObserver' in window)) return;
+    document.querySelectorAll('.sal-vote-count').forEach(function (el) {
+      new MutationObserver(function () { bump(el); }).observe(el, {
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+    });
+  });
+})();
