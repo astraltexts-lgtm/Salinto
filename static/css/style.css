@@ -328,6 +328,7 @@ button, input, select, textarea {
     linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
   background-size: 72px 72px;
+  -webkit-mask-image: radial-gradient(ellipse at 30% 40%, #000 30%, transparent 80%);
   mask-image: radial-gradient(ellipse at 30% 40%, #000 30%, transparent 80%);
   pointer-events: none;
 }
@@ -2406,6 +2407,16 @@ html.js .sal-reveal.sal-reveal-s {
   color: var(--sal-text-muted);
   font-size: 0.95rem;
   margin-top: -0.4rem;
+}
+
+/* Muted inline text */
+.sal-text-muted {
+  color: var(--sal-text-muted);
+}
+
+/* Username next to avatar in navbar */
+.sal-user-name {
+  white-space: nowrap;
 }
 
 /* Split layout columns */
