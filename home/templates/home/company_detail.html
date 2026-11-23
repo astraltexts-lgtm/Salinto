@@ -83,7 +83,7 @@
       <!-- Main Column: Reviews List & Rating Breakdown -->
       <div class="sal-main-col">
         <!-- Rating Distribution Summary Card -->
-        <div class="sal-card sal-rating-breakdown-card">
+        <div class="sal-card sal-rating-breakdown-card sal-reveal">
           <div class="sal-breakdown-score-side">
             <div class="sal-breakdown-big-num {% if company.rating < 3.0 %}bad{% elif company.rating < 4.0 %}warn{% endif %}">
               {{ company.rating|floatformat:1 }}
@@ -109,7 +109,7 @@
         </div>
 
         <!-- Filter & Sort Bar -->
-        <div class="sal-reviews-controls">
+        <div class="sal-reviews-controls sal-reveal sal-reveal-s">
           <div class="sal-reviews-filter-info">
             {% if rating_filter %}
               <span class="sal-filter-pill">Showing only {{ rating_filter }}★ reviews</span>
@@ -132,7 +132,7 @@
         {% if reviews %}
           <div class="sal-reviews-list">
             {% for review in reviews %}
-              <div class="sal-review-card" id="review-{{ review.id }}">
+              <div class="sal-review-card sal-reveal" id="review-{{ review.id }}">
                 <div class="sal-review-header">
                   <div class="sal-reviewer-wrap">
                     <div class="sal-user-avatar">
@@ -206,7 +206,7 @@
 
       <!-- Side Column: Write a Review Form with Interactive Star Picker -->
       <div class="sal-side-col">
-        <div class="sal-card sal-sticky-card">
+        <div class="sal-card sal-sticky-card sal-reveal">
           <h3>Write a Review</h3>
           <p class="sal-card-sub">Share authentic insights about compensation, work-life balance, and management.</p>
 
@@ -247,14 +247,14 @@
     <div class="sal-split-layout">
       <!-- Main Column: Salary Insights & Philippine 13th-Month Pay Breakdown -->
       <div class="sal-main-col">
-        <div class="sal-section-header">
+        <div class="sal-section-header sal-reveal sal-reveal-s">
           <h2>Philippine Compensation at {{ company.name }}</h2>
           <span class="sal-count">{{ salaries|length }} verified reports</span>
         </div>
 
         {% if salary_summary.avg %}
           <!-- 13th Month Pay Annual Package Summary -->
-          <div class="sal-card sal-salary-hero-card">
+          <div class="sal-card sal-salary-hero-card sal-reveal">
             <div class="sal-salary-hero-grid">
               <div>
                 <span class="sal-summary-label">Average Monthly Base Pay</span>
@@ -278,7 +278,7 @@
           <h3 class="sal-subheading" style="margin-top: 2rem;">Salary by Role</h3>
           <div class="sal-roles-grid">
             {% for role in roles_summary %}
-              <div class="sal-role-card">
+              <div class="sal-role-card sal-reveal">
                 <div>
                   <div class="sal-role-title">{{ role.job_title }}</div>
                   <div class="sal-role-count">{{ role.count }} report{{ role.count|pluralize }}</div>
@@ -291,7 +291,7 @@
 
         <h3 class="sal-subheading" style="margin-top: 2.5rem;">Reported Salary Entries</h3>
         {% if salaries %}
-          <div class="sal-salaries-table-wrap">
+          <div class="sal-salaries-table-wrap sal-reveal">
             <table class="sal-table">
               <thead>
                 <tr>
@@ -337,7 +337,7 @@
 
       <!-- Side Column: Add Salary Form -->
       <div class="sal-side-col">
-        <div class="sal-card sal-sticky-card">
+        <div class="sal-card sal-sticky-card sal-reveal">
           <h3>Report a Salary</h3>
           <p class="sal-card-sub">All salary submissions help provide transparency to job seekers in the Philippines.</p>
 
