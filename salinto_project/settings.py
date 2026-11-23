@@ -88,9 +88,9 @@ WSGI_APPLICATION = 'salinto_project.wsgi.application'
 
 DB_ENGINE = os.environ.get('DB_ENGINE', 'django.db.backends.postgresql')
 DB_NAME = os.environ.get('DB_NAME', 'postgres')
-DB_USER = os.environ.get('DB_USER', 'postgres.qrziwrqmjlclehdonbxf')
-DB_PASSWORD = os.environ.get('DB_PASSWORD', '#Mcgi012005123')
-DB_HOST = os.environ.get('DB_HOST', 'aws-1-ap-northeast-1.pooler.supabase.com')
+DB_USER = os.environ.get('DB_USER', '')
+DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
+DB_HOST = os.environ.get('DB_HOST', 'localhost')
 DB_PORT = os.environ.get('DB_PORT', '5432')
 
 DATABASES = {
