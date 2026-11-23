@@ -1,38 +1,58 @@
 /* =========================================================
-   Salinto Design Tokens (v2 — light palette redesign)
-   Concept: warm daylight passing through a paned glass door.
-   Grounded in "salaming pinto" literally: a window-pane grid
-   with mullions, not an abstract glass effect.
+   Salinto Design System v3 — "Glassdoor-grade, orange soul"
+   ---------------------------------------------------------
+   Color theory: the page runs on a warm paper canvas
+   (#f7f7f5) with espresso ink (#1a1613) so one saturated
+   orange can carry ALL the energy. Orange = warmth,
+   optimism and approachability — right for honest workplace
+   talk — and its blue-ish complement lives in the deep
+   green/red semantics so the accent never has to compete.
+   The vivid orange (#f2762e) is used for fills; text-grade
+   orange drops to #bf5510 so links stay AA on white; type
+   ON orange flips to near-black ink (#2a1405) for contrast.
+   Motion: one orchestrated entrance (hero rise), then quiet
+   reveal-on-scroll + tactile hover. Expo-out easing
+   (cubic-bezier(0.22,1,0.36,1)) everywhere = "high-end".
    ========================================================= */
 
 :root {
-  /* Color — light, warm, one accent only */
-  --sal-bg: #f2efe8;
-  --sal-surface: #fdfcf9;
-  --sal-surface-sunken: #ece8df;
-  --sal-border: rgba(42, 36, 26, 0.10);
-  --sal-border-strong: rgba(42, 36, 26, 0.16);
-  --sal-accent: #e0923c;
-  --sal-accent-deep: #c67a2b;
-  --sal-accent-tint: rgba(224, 146, 60, 0.14);
-  --sal-text: #2a2620;
-  --sal-text-muted: #756e61;
-  --sal-good: #4c8f68;
-  --sal-warn: #c68a2b;
-  --sal-bad: #b8563a;
-  --sal-shadow-tint: 42, 36, 26;
+  /* Color — paper canvas, espresso ink, one orange accent */
+  --sal-bg: #f7f7f5;
+  --sal-surface: #ffffff;
+  --sal-surface-sunken: #efefec;
+  --sal-border: rgba(26, 22, 19, 0.08);
+  --sal-border-strong: rgba(26, 22, 19, 0.16);
+  --sal-accent: #f2762e;
+  --sal-accent-deep: #bf5510;
+  --sal-accent-tint: rgba(242, 118, 46, 0.12);
+  --sal-accent-ink: #2a1405;
+  --sal-ink-deep: #17130f;
+  --sal-text: #1a1613;
+  --sal-text-muted: #6f675d;
+  --sal-good: #1f7a4d;
+  --sal-warn: #a86a12;
+  --sal-bad: #b04426;
+  --sal-shadow-tint: 26, 22, 19;
 
-  /* Type */
+  /* Type — Outfit for display, Plus Jakarta Sans for body */
   --sal-font-display: 'Outfit', 'Segoe UI', sans-serif;
   --sal-font-body: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
 
-  /* Shape — deliberately varied, not uniform */
-  --sal-radius-sm: 8px;
+  /* Shape — soft, consistent, quietly rounded */
+  --sal-radius-sm: 10px;
   --sal-radius-md: 14px;
-  --sal-radius-lg: 22px;
-  --sal-radius-xl: 30px;
-  --sal-shadow-card: 0 10px 28px rgba(var(--sal-shadow-tint), 0.10);
-  --sal-shadow-raised: 0 16px 36px rgba(var(--sal-shadow-tint), 0.14);
+  --sal-radius-lg: 18px;
+  --sal-radius-xl: 24px;
+  --sal-shadow-card: 0 1px 2px rgba(var(--sal-shadow-tint), 0.05),
+                     0 10px 28px -12px rgba(var(--sal-shadow-tint), 0.14);
+  --sal-shadow-raised: 0 2px 4px rgba(var(--sal-shadow-tint), 0.06),
+                       0 22px 48px -18px rgba(var(--sal-shadow-tint), 0.22);
+
+  /* Motion — expo out is the house easing */
+  --sal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sal-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --sal-dur-fast: 0.18s;
+  --sal-dur: 0.3s;
 }
 
 * {
@@ -52,14 +72,17 @@ body {
   font-size: 16px;
   line-height: 1.6;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--sal-font-display);
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   margin: 0 0 0.4em 0;
   text-wrap: balance;
+  color: var(--sal-text);
 }
 
 p {
@@ -71,25 +94,34 @@ p {
 a {
   color: var(--sal-accent-deep);
   text-decoration: none;
+  transition: color var(--sal-dur-fast) ease;
 }
 
 a:hover {
-  text-decoration: underline;
+  color: var(--sal-accent);
+  text-decoration: none;
 }
 
-button, input {
+button, input, select, textarea {
   font-family: inherit;
 }
 
 :focus-visible {
   outline: 2px solid var(--sal-accent);
   outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: rgba(242, 118, 46, 0.22);
+  color: var(--sal-text);
 }
 
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
 
@@ -101,21 +133,28 @@ button, input {
   width: 100%;
   padding: 0.85rem 1rem;
   border-radius: var(--sal-radius-sm);
-  border: 1px solid var(--sal-border);
+  border: 1.5px solid var(--sal-border-strong);
   background: var(--sal-surface);
   color: var(--sal-text);
   font-size: 0.95rem;
   margin-bottom: 1rem;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color var(--sal-dur-fast) ease,
+              box-shadow var(--sal-dur-fast) ease,
+              background var(--sal-dur-fast) ease;
 }
 
 .sal-input::placeholder {
-  color: var(--sal-text-muted);
+  color: #9a9184;
+}
+
+.sal-input:hover {
+  border-color: rgba(26, 22, 19, 0.28);
 }
 
 .sal-input:focus {
+  outline: none;
   border-color: var(--sal-accent);
-  box-shadow: 0 0 0 3px var(--sal-accent-tint);
+  box-shadow: 0 0 0 4px var(--sal-accent-tint);
 }
 
 .sal-btn {
@@ -129,7 +168,11 @@ button, input {
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: transform 0.12s cubic-bezier(0.32, 0.72, 0, 1), background 0.15s ease, box-shadow 0.15s ease;
+  transition: transform var(--sal-dur-fast) var(--sal-ease),
+              background var(--sal-dur-fast) ease,
+              box-shadow var(--sal-dur) var(--sal-ease),
+              border-color var(--sal-dur-fast) ease,
+              color var(--sal-dur-fast) ease;
 }
 
 .sal-btn:hover {
@@ -137,30 +180,39 @@ button, input {
 }
 
 .sal-btn:active {
-  transform: scale(0.98);
+  transform: scale(0.975);
 }
 
 .sal-btn-primary {
-  background: var(--sal-accent);
-  color: #2a1c0a;
+  background: linear-gradient(135deg, #f2762e 0%, #e0611a 100%);
+  color: var(--sal-accent-ink);
   width: 100%;
-  box-shadow: 0 6px 18px rgba(224, 146, 60, 0.28);
+  box-shadow: 0 8px 20px -8px rgba(242, 118, 46, 0.65);
 }
 
 .sal-btn-primary:hover {
-  background: var(--sal-accent-deep);
-  box-shadow: 0 8px 22px rgba(224, 146, 60, 0.34);
+  background: linear-gradient(135deg, #ff853c 0%, #ea6a1e 100%);
+  color: var(--sal-accent-ink);
+  box-shadow: 0 12px 26px -8px rgba(242, 118, 46, 0.75);
+  transform: translateY(-1px);
+}
+
+.sal-btn-primary:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .sal-btn-ghost {
-  background: transparent;
+  background: var(--sal-surface);
   color: var(--sal-text);
-  border: 1px solid var(--sal-border-strong);
+  border: 1.5px solid var(--sal-border-strong);
+  box-shadow: 0 1px 2px rgba(var(--sal-shadow-tint), 0.04);
 }
 
 .sal-btn-ghost:hover {
   border-color: var(--sal-accent);
   color: var(--sal-accent-deep);
+  box-shadow: 0 6px 16px -8px rgba(242, 118, 46, 0.45);
+  transform: translateY(-1px);
 }
 
 .sal-error {
@@ -176,25 +228,71 @@ button, input {
 }
 
 /* =========================================================
-   Messages (Django messages framework)
+   Toast messages (Django messages → fixed toast stack)
    ========================================================= */
 
 .sal-messages {
-  max-width: 480px;
-  margin: 0 auto 1rem auto;
-  padding: 0 1.5rem;
+  position: fixed;
+  top: 1.2rem;
+  right: 1.2rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  pointer-events: none;
+  max-width: 380px;
 }
 
 .sal-message {
-  background: var(--sal-surface);
-  border: 1px solid var(--sal-border);
-  border-left: 3px solid var(--sal-accent);
-  border-radius: var(--sal-radius-sm);
-  padding: 0.7rem 1rem;
-  font-size: 0.9rem;
-  margin-bottom: 0.6rem;
-  color: var(--sal-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--sal-ink-deep);
+  color: #fdfcf9;
+  border-radius: var(--sal-radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.8rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  pointer-events: all;
+  cursor: pointer;
+  box-shadow: var(--sal-shadow-raised);
+  opacity: 0;
+  transform: translateX(1.5rem);
+  transition: opacity var(--sal-dur) var(--sal-ease),
+              transform var(--sal-dur) var(--sal-ease);
 }
+
+.sal-toast--visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sal-message-text { flex: 1; }
+
+.sal-message-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  padding: 0 0.2rem;
+  line-height: 1;
+  transition: opacity 0.15s;
+}
+.sal-message-close:hover { opacity: 1; }
+
+.sal-message--success { background: #14532d; }
+.sal-message--error   { background: var(--sal-bad); }
+.sal-message--warning { background: var(--sal-warn); color: #fff; }
+
+/* Highlight flash on anchored element */
+@keyframes sal-flash {
+  0%, 100% { background: transparent; }
+  40%       { background: var(--sal-accent-tint); }
+}
+.sal-highlight-flash { animation: sal-flash 1.8s ease; border-radius: var(--sal-radius-sm); }
 
 /* =========================================================
    Auth screens: split layout, literal window-pane motif
@@ -206,6 +304,8 @@ button, input {
   grid-template-columns: 1.05fr 1fr;
 }
 
+/* Brand panel: espresso glass with one warm light source.
+   White trust-text finally sits on ink — full contrast. */
 .sal-auth-glass {
   position: relative;
   overflow: hidden;
@@ -213,12 +313,27 @@ button, input {
   flex-direction: column;
   justify-content: center;
   padding: 4rem;
-  background: var(--sal-surface-sunken);
+  background:
+    radial-gradient(900px 600px at 12% 18%, rgba(242, 118, 46, 0.28), transparent 60%),
+    radial-gradient(700px 500px at 95% 90%, rgba(242, 118, 46, 0.14), transparent 65%),
+    linear-gradient(155deg, #1d1712 0%, #241a12 55%, #2a1d10 100%);
+  color: #fff;
+}
+
+.sal-auth-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at 30% 40%, #000 30%, transparent 80%);
+  pointer-events: none;
 }
 
 /* A literal paned window: mullion grid with warm light glowing
-   through the panes. This is the one deliberate, bold element
-   in the whole app; everything else stays quiet. */
+   through the panes — the one bold element of the auth screen. */
 .sal-window {
   position: relative;
   width: 300px;
@@ -229,9 +344,10 @@ button, input {
 .sal-window-glow {
   position: absolute;
   inset: -40px;
-  background: radial-gradient(circle at 35% 30%, rgba(224, 146, 60, 0.32), transparent 62%);
+  background: radial-gradient(circle at 35% 30%, rgba(242, 118, 46, 0.4), transparent 62%);
   filter: blur(4px);
   z-index: 0;
+  animation: sal-breathe 7s var(--sal-ease) infinite alternate;
 }
 
 .sal-window-grid {
@@ -245,18 +361,38 @@ button, input {
   gap: 10px;
   padding: 10px;
   border-radius: var(--sal-radius-lg);
-  background: rgba(42, 36, 26, 0.9);
+  background: rgba(10, 8, 6, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: var(--sal-shadow-raised);
 }
 
 .sal-window-grid span {
   display: block;
   border-radius: var(--sal-radius-sm);
-  background: linear-gradient(155deg, rgba(255, 227, 179, 0.85), rgba(224, 146, 60, 0.55));
+  background: linear-gradient(155deg, rgba(255, 214, 156, 0.9), rgba(242, 118, 46, 0.55));
+  animation: sal-pane 7s var(--sal-ease) infinite alternate;
 }
 
-.sal-window-grid span:nth-child(2) { background: linear-gradient(155deg, rgba(255, 227, 179, 0.95), rgba(224, 146, 60, 0.7)); }
-.sal-window-grid span:nth-child(5) { background: linear-gradient(155deg, rgba(255, 227, 179, 0.65), rgba(224, 146, 60, 0.4)); }
+.sal-window-grid span:nth-child(2) {
+  background: linear-gradient(155deg, rgba(255, 227, 199, 0.98), rgba(242, 118, 46, 0.75));
+  animation-delay: 0.6s;
+}
+.sal-window-grid span:nth-child(5) {
+  background: linear-gradient(155deg, rgba(255, 214, 156, 0.6), rgba(242, 118, 46, 0.38));
+  animation-delay: 1.4s;
+}
+.sal-window-grid span:nth-child(3) { animation-delay: 1s; }
+.sal-window-grid span:nth-child(4) { animation-delay: 1.8s; }
+.sal-window-grid span:nth-child(6) { animation-delay: 2.2s; }
+
+@keyframes sal-breathe {
+  from { opacity: 0.65; transform: scale(1); }
+  to   { opacity: 1;    transform: scale(1.05); }
+}
+@keyframes sal-pane {
+  from { filter: brightness(0.92); }
+  to   { filter: brightness(1.08); }
+}
 
 .sal-auth-glass-content {
   position: relative;
@@ -267,13 +403,15 @@ button, input {
   font-family: var(--sal-font-display);
   font-size: 2.3rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   color: var(--sal-text);
   margin-bottom: 0.6rem;
 }
 
+.sal-auth-glass .sal-wordmark { color: #fff; }
+
 .sal-wordmark span {
-  color: var(--sal-accent-deep);
+  color: var(--sal-accent);
 }
 
 .sal-tagline {
@@ -281,6 +419,8 @@ button, input {
   color: var(--sal-text-muted);
   max-width: 34ch;
 }
+
+.sal-auth-glass .sal-tagline { color: rgba(255, 255, 255, 0.72); }
 
 .sal-auth-form-side {
   display: flex;
@@ -292,11 +432,11 @@ button, input {
 
 .sal-auth-card {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
 }
 
 .sal-auth-card h1 {
-  font-size: 1.7rem;
+  font-size: 1.8rem;
 }
 
 .sal-auth-card .sal-subhead {
@@ -311,6 +451,8 @@ button, input {
   color: var(--sal-text-muted);
   text-align: center;
 }
+
+.sal-auth-switch a { font-weight: 600; }
 
 @media (max-width: 860px) {
   .sal-auth {
@@ -335,28 +477,42 @@ button, input {
 }
 
 /* =========================================================
-   App shell (navbar) used on Home screen
+   App shell (navbar)
    ========================================================= */
 
 .sal-navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.1rem 2rem;
+  gap: 1rem;
+  padding: 0.9rem 2rem;
   border-bottom: 1px solid var(--sal-border);
-  background: var(--sal-surface);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
+  transition: box-shadow var(--sal-dur) var(--sal-ease),
+              background var(--sal-dur) ease;
+}
+
+.sal-navbar--scrolled {
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 1px 0 var(--sal-border), 0 12px 32px -20px rgba(var(--sal-shadow-tint), 0.35);
 }
 
 .sal-navbar-brand {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--sal-font-display);
   font-weight: 700;
   font-size: 1.3rem;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   color: var(--sal-text);
 }
+
+.sal-navbar-brand:hover { text-decoration: none; color: var(--sal-text); }
 
 .sal-navbar-brand span {
   color: var(--sal-accent-deep);
@@ -377,13 +533,32 @@ button, input {
 .sal-hero {
   position: relative;
   overflow: hidden;
-  padding: 4.5rem 2rem 4rem 2rem;
-  background: var(--sal-surface-sunken);
+  padding: 5rem 2rem 4.25rem 2rem;
+  background:
+    radial-gradient(1100px 480px at 50% -12%, rgba(242, 118, 46, 0.16), transparent 70%),
+    linear-gradient(180deg, #fbfaf8 0%, var(--sal-bg) 100%);
   border-bottom: 1px solid var(--sal-border);
 }
 
+/* Soft window-pane watermark echoing the brand motif */
+.sal-hero::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  right: -60px;
+  width: 420px;
+  height: 420px;
+  background-image:
+    linear-gradient(rgba(242, 118, 46, 0.09) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(242, 118, 46, 0.09) 2px, transparent 2px);
+  background-size: 60px 60px;
+  transform: rotate(8deg);
+  mask-image: radial-gradient(circle at 60% 40%, #000 20%, transparent 75%);
+  pointer-events: none;
+}
+
 .sal-hero-inner {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
   text-align: center;
   position: relative;
@@ -391,7 +566,32 @@ button, input {
 }
 
 .sal-hero h1 {
-  font-size: 2.1rem;
+  font-size: clamp(2rem, 4.5vw, 2.9rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+
+.sal-hero p {
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.05rem;
+}
+
+/* Orchestrated entrance: the one motion moment of the page */
+.sal-hero-inner > * {
+  animation: sal-rise 0.8s var(--sal-ease) both;
+}
+.sal-hero-inner > *:nth-child(1) { animation-delay: 0.05s; }
+.sal-hero-inner > *:nth-child(2) { animation-delay: 0.14s; }
+.sal-hero-inner > *:nth-child(3) { animation-delay: 0.23s; }
+.sal-hero-inner > *:nth-child(4) { animation-delay: 0.32s; }
+.sal-hero-inner > *:nth-child(5) { animation-delay: 0.41s; }
+.sal-hero-inner > *:nth-child(6) { animation-delay: 0.5s; }
+
+@keyframes sal-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .sal-search {
@@ -406,7 +606,7 @@ button, input {
 }
 
 .sal-content {
-  max-width: 980px;
+  max-width: 1080px;
   margin: 0 auto;
   padding: 3rem 2rem 5rem 2rem;
 }
@@ -419,7 +619,7 @@ button, input {
 }
 
 .sal-content-heading h2 {
-  font-size: 1.3rem;
+  font-size: 1.45rem;
   margin-bottom: 0;
 }
 
@@ -431,25 +631,29 @@ button, input {
 
 .sal-company-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1.3rem;
 }
 
 .sal-company-card {
+  position: relative;
   background: var(--sal-surface);
   border: 1px solid var(--sal-border);
-  border-radius: var(--sal-radius-xl);
+  border-radius: var(--sal-radius-lg);
   padding: 1.4rem;
-  transition: box-shadow 0.18s ease, transform 0.18s cubic-bezier(0.32, 0.72, 0, 1);
+  transition: box-shadow var(--sal-dur) var(--sal-ease),
+              transform var(--sal-dur) var(--sal-ease),
+              border-color var(--sal-dur) ease;
 }
 
 .sal-company-card:hover {
-  box-shadow: var(--sal-shadow-card);
-  transform: translateY(-2px);
+  border-color: rgba(242, 118, 46, 0.4);
+  box-shadow: var(--sal-shadow-raised);
+  transform: translateY(-4px);
 }
 
 .sal-company-card h3 {
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   margin-bottom: 0.2rem;
 }
 
@@ -473,8 +677,9 @@ button, input {
   font-variant-numeric: tabular-nums;
   color: #fff;
   background: var(--sal-good);
-  border-radius: var(--sal-radius-sm);
-  padding: 0.15rem 0.55rem;
+  border-radius: 8px;
+  padding: 0.15rem 0.6rem;
+  line-height: 1.35;
 }
 
 .sal-rating-badge.warn { background: var(--sal-warn); }
@@ -494,20 +699,21 @@ button, input {
 
 .sal-tag {
   font-size: 0.75rem;
-  padding: 0.25rem 0.6rem;
+  padding: 0.25rem 0.65rem;
   border-radius: 999px;
-  border: 1px solid var(--sal-border);
+  border: 1px solid var(--sal-border-strong);
   color: var(--sal-text-muted);
+  background: var(--sal-surface);
 }
 
 .sal-empty {
   text-align: center;
   color: var(--sal-text-muted);
   padding: 3rem 1rem;
-  border: 1px dashed var(--sal-border-strong);
+  border: 1.5px dashed var(--sal-border-strong);
   border-radius: var(--sal-radius-lg);
+  background: var(--sal-surface);
 }
-
 
 /* =========================================================
    Extended Components: Nav, Directory, Detail, Profile, Settings
@@ -528,28 +734,35 @@ button, input {
 .sal-navbar-links {
   display: flex;
   align-items: center;
-  gap: 1.2rem;
+  gap: 0.3rem;
 }
 
 .sal-nav-link {
   color: var(--sal-text-muted);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  padding: 0.35rem 0.6rem;
-  border-radius: var(--sal-radius-sm);
-  transition: color 0.15s ease, background 0.15s ease;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  transition: color var(--sal-dur-fast) ease,
+              background var(--sal-dur-fast) ease;
 }
 
-.sal-nav-link:hover, .sal-nav-link.active {
+.sal-nav-link:hover {
   color: var(--sal-text);
   background: var(--sal-surface-sunken);
   text-decoration: none;
 }
 
+.sal-nav-link.active {
+  color: var(--sal-accent-deep);
+  background: var(--sal-accent-tint);
+  font-weight: 600;
+}
+
 .sal-user-badge {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
   color: var(--sal-text);
   font-weight: 500;
   font-size: 0.9rem;
@@ -557,21 +770,27 @@ button, input {
 
 .sal-user-badge:hover {
   text-decoration: none;
+  color: var(--sal-text);
 }
 
 .sal-user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: var(--sal-accent);
-  color: #2a1c0a;
+  background: linear-gradient(135deg, #f2762e, #d95f16);
+  color: #fff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-family: var(--sal-font-display);
   font-weight: 700;
   font-size: 0.8rem;
-  box-shadow: 0 2px 6px rgba(224, 146, 60, 0.3);
+  box-shadow: 0 4px 10px -4px rgba(242, 118, 46, 0.7);
+  transition: transform var(--sal-dur-fast) var(--sal-ease-spring);
+}
+
+.sal-user-badge:hover .sal-user-avatar {
+  transform: scale(1.08);
 }
 
 .sal-btn-sm {
@@ -580,9 +799,9 @@ button, input {
 }
 
 .sal-btn-following {
-  background: #e8f3ec;
-  color: #2b6e48;
-  border: 1px solid #b7dfc7;
+  background: #e9f6ef;
+  color: #186a43;
+  border: 1.5px solid #bfe6d2;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -591,10 +810,13 @@ button, input {
   font-weight: 600;
   font-size: 0.92rem;
   cursor: pointer;
+  transition: background var(--sal-dur-fast) ease,
+              transform var(--sal-dur-fast) var(--sal-ease);
 }
 
 .sal-btn-following:hover {
-  background: #d9ecdf;
+  background: #dbf0e5;
+  transform: translateY(-1px);
 }
 
 .sal-btn-bad {
@@ -605,21 +827,39 @@ button, input {
 
 /* Hero & Search */
 .sal-hero-tag {
-  display: inline-block;
-  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.01em;
   color: var(--sal-accent-deep);
-  background: var(--sal-accent-tint);
-  padding: 0.3rem 0.75rem;
+  background: var(--sal-surface);
+  border: 1px solid rgba(242, 118, 46, 0.35);
+  padding: 0.4rem 0.9rem;
   border-radius: 999px;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1.1rem;
+  box-shadow: 0 2px 10px -4px rgba(242, 118, 46, 0.4);
+}
+
+.sal-hero-tag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sal-accent);
+  box-shadow: 0 0 0 3px rgba(242, 118, 46, 0.25);
+  animation: sal-pulse 2.4s var(--sal-ease) infinite;
+}
+
+@keyframes sal-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(242, 118, 46, 0.25); }
+  50%      { box-shadow: 0 0 0 6px rgba(242, 118, 46, 0.08); }
 }
 
 .sal-search-box {
-  margin: 1.8rem auto 0 auto;
-  max-width: 660px;
+  margin: 2rem auto 0 auto;
+  max-width: 680px;
 }
 
 .sal-search-inputs {
@@ -635,16 +875,32 @@ button, input {
 
 .sal-search-icon {
   position: absolute;
-  left: 0.9rem;
+  left: 1.05rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--sal-text-muted);
   pointer-events: none;
+  z-index: 1;
 }
 
+/* Glassdoor-style: one big elevated search bar */
 .sal-search-input {
-  padding-left: 2.5rem !important;
+  padding: 1.05rem 1rem 1.05rem 2.9rem !important;
   margin-bottom: 0 !important;
+  border-radius: var(--sal-radius-md) !important;
+  border: 1px solid rgba(26, 22, 19, 0.1) !important;
+  background: var(--sal-surface) !important;
+  font-size: 1rem !important;
+  box-shadow: 0 18px 40px -22px rgba(var(--sal-shadow-tint), 0.45),
+              0 2px 6px rgba(var(--sal-shadow-tint), 0.05);
+  transition: box-shadow var(--sal-dur) var(--sal-ease),
+              border-color var(--sal-dur-fast) ease;
+}
+
+.sal-search-input:focus {
+  border-color: var(--sal-accent) !important;
+  box-shadow: 0 24px 50px -22px rgba(242, 118, 46, 0.55),
+              0 0 0 4px var(--sal-accent-tint);
 }
 
 .sal-filter-select {
@@ -652,11 +908,16 @@ button, input {
   margin-bottom: 0 !important;
   background-color: var(--sal-surface);
   cursor: pointer;
+  border-radius: var(--sal-radius-md) !important;
+  box-shadow: 0 10px 26px -20px rgba(var(--sal-shadow-tint), 0.4);
 }
 
 .sal-search-btn {
   width: auto !important;
   white-space: nowrap;
+  border-radius: var(--sal-radius-md) !important;
+  padding: 1.05rem 1.6rem !important;
+  font-size: 1rem !important;
 }
 
 .sal-active-filters {
@@ -664,7 +925,7 @@ button, input {
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.8rem;
+  margin-top: 0.9rem;
   font-size: 0.85rem;
   color: var(--sal-text-muted);
 }
@@ -672,7 +933,7 @@ button, input {
 .sal-filter-pill {
   background: var(--sal-surface);
   border: 1px solid var(--sal-border-strong);
-  padding: 0.2rem 0.6rem;
+  padding: 0.25rem 0.7rem;
   border-radius: 999px;
   font-weight: 500;
   color: var(--sal-text);
@@ -689,10 +950,10 @@ button, input {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  margin-top: 2.2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--sal-border);
+  gap: 2.5rem;
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(26, 22, 19, 0.1);
 }
 
 .sal-stat-item {
@@ -704,23 +965,24 @@ button, input {
 .sal-stat-num {
   font-family: var(--sal-font-display);
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   color: var(--sal-text);
   line-height: 1.1;
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-stat-label {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--sal-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-top: 0.2rem;
+  letter-spacing: 0.07em;
+  margin-top: 0.3rem;
 }
 
 .sal-stat-divider {
   width: 1px;
-  height: 28px;
-  background: var(--sal-border);
+  height: 34px;
+  background: var(--sal-border-strong);
 }
 
 /* Company Card Enhancements */
@@ -742,11 +1004,11 @@ button, input {
 }
 
 .sal-company-avatar {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: var(--sal-radius-sm);
-  background: var(--sal-surface-sunken);
-  border: 1px solid var(--sal-border);
+  background: var(--sal-accent-tint);
+  border: 1px solid rgba(242, 118, 46, 0.25);
   color: var(--sal-accent-deep);
   display: flex;
   align-items: center;
@@ -754,6 +1016,11 @@ button, input {
   font-family: var(--sal-font-display);
   font-weight: 700;
   font-size: 1.1rem;
+  transition: transform var(--sal-dur) var(--sal-ease-spring);
+}
+
+.sal-company-card:hover .sal-company-avatar {
+  transform: scale(1.06) rotate(-2deg);
 }
 
 .sal-following-badge {
@@ -761,9 +1028,9 @@ button, input {
   align-items: center;
   gap: 0.25rem;
   font-size: 0.72rem;
-  color: #2b6e48;
-  background: #e8f3ec;
-  padding: 0.2rem 0.5rem;
+  color: #186a43;
+  background: #e9f6ef;
+  padding: 0.22rem 0.55rem;
   border-radius: 999px;
   font-weight: 600;
 }
@@ -771,12 +1038,12 @@ button, input {
 .sal-card-arrow {
   margin-left: auto;
   color: var(--sal-accent);
-  font-size: 1.1rem;
-  transition: transform 0.15s ease;
+  font-size: 1.15rem;
+  transition: transform var(--sal-dur) var(--sal-ease);
 }
 
 .sal-company-card:hover .sal-card-arrow {
-  transform: translateX(4px);
+  transform: translateX(5px);
 }
 
 .sal-tag-muted {
@@ -785,7 +1052,9 @@ button, input {
 
 /* Company Detail Screen */
 .sal-detail-header-wrap {
-  background: var(--sal-surface);
+  background:
+    radial-gradient(700px 300px at 85% -40%, rgba(242, 118, 46, 0.1), transparent 70%),
+    var(--sal-surface);
   border-bottom: 1px solid var(--sal-border);
   padding: 1.5rem 0 0 0;
 }
@@ -795,11 +1064,13 @@ button, input {
   font-size: 0.88rem;
   color: var(--sal-text-muted);
   margin-bottom: 1.2rem;
+  transition: color var(--sal-dur-fast) ease, transform var(--sal-dur-fast) var(--sal-ease);
 }
 
 .sal-back-link:hover {
-  color: var(--sal-text);
+  color: var(--sal-accent-deep);
   text-decoration: none;
+  transform: translateX(-3px);
 }
 
 .sal-detail-hero {
@@ -818,22 +1089,23 @@ button, input {
 }
 
 .sal-detail-avatar {
-  width: 64px;
-  height: 64px;
+  width: 68px;
+  height: 68px;
   border-radius: var(--sal-radius-md);
-  background: var(--sal-surface-sunken);
-  border: 1px solid var(--sal-border-strong);
-  color: var(--sal-accent-deep);
+  background: linear-gradient(135deg, #f2762e, #d95f16);
+  border: none;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--sal-font-display);
   font-weight: 700;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
+  box-shadow: 0 12px 26px -14px rgba(242, 118, 46, 0.85);
 }
 
 .sal-detail-info h1 {
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   margin-bottom: 0.3rem;
 }
 
@@ -841,16 +1113,17 @@ button, input {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.8rem;
+  gap: 0.7rem;
   font-size: 0.88rem;
   color: var(--sal-text-muted);
 }
 
 .sal-meta-badge {
   background: var(--sal-surface-sunken);
-  padding: 0.2rem 0.55rem;
-  border-radius: var(--sal-radius-sm);
-  font-weight: 500;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.78rem;
   color: var(--sal-text);
 }
 
@@ -873,9 +1146,10 @@ button, input {
 .sal-detail-rating-score {
   font-family: var(--sal-font-display);
   font-weight: 700;
-  font-size: 1.7rem;
+  font-size: 1.9rem;
   color: var(--sal-good);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-detail-rating-score.warn { color: var(--sal-warn); }
@@ -889,17 +1163,22 @@ button, input {
 /* Tabs */
 .sal-tabs {
   display: flex;
-  gap: 1rem;
+  gap: 0.4rem;
   border-bottom: 1px solid var(--sal-border);
+  overflow-x: auto;
 }
 
 .sal-tab {
-  padding: 0.8rem 1rem;
+  position: relative;
+  padding: 0.85rem 1.1rem;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--sal-text-muted);
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s ease;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color var(--sal-dur-fast) ease,
+              border-color var(--sal-dur-fast) ease;
 }
 
 .sal-tab:hover {
@@ -909,7 +1188,7 @@ button, input {
 
 .sal-tab.active {
   color: var(--sal-accent-deep);
-  border-bottom-color: var(--sal-accent-deep);
+  border-bottom-color: var(--sal-accent);
 }
 
 .sal-detail-body {
@@ -933,11 +1212,12 @@ button, input {
   border: 1px solid var(--sal-border);
   border-radius: var(--sal-radius-lg);
   padding: 1.5rem;
+  box-shadow: 0 1px 2px rgba(var(--sal-shadow-tint), 0.04);
 }
 
 .sal-sticky-card {
   position: sticky;
-  top: 5rem;
+  top: 5.5rem;
 }
 
 .sal-card h3 {
@@ -974,6 +1254,7 @@ button, input {
 .sal-checkbox {
   width: 16px;
   height: 16px;
+  accent-color: var(--sal-accent);
 }
 
 /* Reviews List */
@@ -987,7 +1268,16 @@ button, input {
   background: var(--sal-surface);
   border: 1px solid var(--sal-border);
   border-radius: var(--sal-radius-md);
-  padding: 1.3rem;
+  padding: 1.4rem;
+  transition: box-shadow var(--sal-dur) var(--sal-ease),
+              transform var(--sal-dur) var(--sal-ease),
+              border-color var(--sal-dur) ease;
+}
+
+.sal-review-card:hover {
+  border-color: rgba(242, 118, 46, 0.3);
+  box-shadow: var(--sal-shadow-card);
+  transform: translateY(-2px);
 }
 
 .sal-review-header {
@@ -995,6 +1285,7 @@ button, input {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 0.8rem;
+  gap: 1rem;
 }
 
 .sal-reviewer-wrap {
@@ -1028,7 +1319,7 @@ button, input {
 
 .sal-review-comment {
   font-size: 0.95rem;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--sal-text);
   margin: 0.8rem 0;
 }
@@ -1055,21 +1346,25 @@ button, input {
 
 .sal-vote-btn {
   background: var(--sal-surface-sunken);
-  border: 1px solid var(--sal-border);
-  border-radius: var(--sal-radius-sm);
-  padding: 0.25rem 0.55rem;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
   font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--sal-text-muted);
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: all var(--sal-dur-fast) ease;
 }
 
 .sal-vote-btn:hover {
   border-color: var(--sal-accent);
+  color: var(--sal-accent-deep);
 }
 
 .sal-vote-btn.active {
   background: var(--sal-accent-tint);
   border-color: var(--sal-accent);
+  color: var(--sal-accent-deep);
   font-weight: 600;
 }
 
@@ -1078,6 +1373,8 @@ button, input {
   color: var(--sal-text-muted);
   font-size: 0.8rem;
 }
+
+.sal-report-link:hover { color: var(--sal-bad); }
 
 .sal-report-form {
   margin-top: 0.5rem;
@@ -1093,8 +1390,8 @@ button, input {
 
 /* Salaries View */
 .sal-salary-summary-banner {
-  background: linear-gradient(135deg, #fdfcf9, #faf5ec);
-  border: 1px solid var(--sal-border);
+  background: linear-gradient(120deg, #fff, #fff7f0);
+  border: 1px solid rgba(242, 118, 46, 0.25);
   border-left: 4px solid var(--sal-accent);
   border-radius: var(--sal-radius-md);
   padding: 1.2rem 1.5rem;
@@ -1105,17 +1402,19 @@ button, input {
 }
 
 .sal-summary-label {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.07em;
+  font-weight: 600;
   color: var(--sal-text-muted);
 }
 
 .sal-summary-value {
   font-family: var(--sal-font-display);
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   font-weight: 700;
   color: var(--sal-accent-deep);
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-summary-context {
@@ -1144,6 +1443,13 @@ button, input {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: border-color var(--sal-dur-fast) ease,
+              transform var(--sal-dur-fast) var(--sal-ease);
+}
+
+.sal-role-card:hover {
+  border-color: rgba(242, 118, 46, 0.4);
+  transform: translateY(-2px);
 }
 
 .sal-role-title {
@@ -1161,6 +1467,7 @@ button, input {
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--sal-text);
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-salaries-table-wrap {
@@ -1178,19 +1485,27 @@ button, input {
 
 .sal-table th {
   text-align: left;
-  padding: 0.75rem 1rem;
+  padding: 0.8rem 1rem;
   background: var(--sal-surface-sunken);
   color: var(--sal-text-muted);
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   border-bottom: 1px solid var(--sal-border);
 }
 
 .sal-table td {
   padding: 0.85rem 1rem;
   border-bottom: 1px solid var(--sal-border);
+}
+
+.sal-table tbody tr {
+  transition: background var(--sal-dur-fast) ease;
+}
+
+.sal-table tbody tr:hover {
+  background: rgba(242, 118, 46, 0.04);
 }
 
 .sal-table tr:last-child td {
@@ -1201,6 +1516,7 @@ button, input {
   font-family: var(--sal-font-display);
   font-weight: 600;
   color: var(--sal-text);
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-date-cell {
@@ -1226,19 +1542,19 @@ button, input {
 }
 
 .sal-profile-avatar-lg {
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-  background: var(--sal-accent);
-  color: #2a1c0a;
+  background: linear-gradient(135deg, #f2762e, #d95f16);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--sal-font-display);
   font-weight: 700;
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   margin-bottom: 1rem;
-  box-shadow: 0 4px 12px rgba(224, 146, 60, 0.3);
+  box-shadow: 0 14px 30px -14px rgba(242, 118, 46, 0.9);
 }
 
 .sal-username-tag {
@@ -1285,10 +1601,10 @@ button, input {
 }
 
 .sal-settings-icon-box {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--sal-radius-sm);
-  background: var(--sal-surface-sunken);
+  background: var(--sal-accent-tint);
   color: var(--sal-accent-deep);
   display: flex;
   align-items: center;
@@ -1299,6 +1615,7 @@ button, input {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   padding: 1rem 0;
   border-top: 1px solid var(--sal-border);
 }
@@ -1306,80 +1623,17 @@ button, input {
 .sal-badge-status-online {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #2b6e48;
-  background: #e8f3ec;
-  padding: 0.25rem 0.6rem;
+  color: #186a43;
+  background: #e9f6ef;
+  padding: 0.25rem 0.65rem;
   border-radius: 999px;
 }
 
-
 /* =================================================================
-   ADDITIONS v3 — Interactive star picker, compare, sort, auth UX,
-   toast system, profile stats, rating breakdown, salary cards,
-   13th-month box, mobile nav, password strength
+   Interactive: star picker, compare, sort, auth UX,
+   profile stats, rating breakdown, salary cards, 13th-month box,
+   mobile nav, password strength
    ================================================================= */
-
-/* ---- Toast / messages ---- */
-.sal-messages {
-  position: fixed;
-  top: 1.2rem;
-  right: 1.2rem;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  pointer-events: none;
-  max-width: 380px;
-}
-
-.sal-message {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: var(--sal-text);
-  color: var(--sal-surface);
-  border-radius: var(--sal-radius-sm);
-  padding: 0.75rem 1rem;
-  font-size: 0.88rem;
-  font-weight: 500;
-  pointer-events: all;
-  cursor: pointer;
-  box-shadow: var(--sal-shadow-raised);
-  opacity: 0;
-  transform: translateX(1.5rem);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.sal-toast--visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.sal-message-text { flex: 1; }
-
-.sal-message-close {
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 1.1rem;
-  cursor: pointer;
-  opacity: 0.6;
-  padding: 0 0.2rem;
-  line-height: 1;
-  transition: opacity 0.15s;
-}
-.sal-message-close:hover { opacity: 1; }
-
-.sal-message--success { background: #1a4a2f; }
-.sal-message--error   { background: var(--sal-bad); }
-.sal-message--warning { background: var(--sal-warn); color: #fff; }
-
-/* Highlight flash on anchored element */
-@keyframes sal-flash {
-  0%, 100% { background: transparent; }
-  40%       { background: var(--sal-accent-tint); }
-}
-.sal-highlight-flash { animation: sal-flash 1.8s ease; border-radius: var(--sal-radius-sm); }
 
 /* ---- Sort row (home directory) ---- */
 .sal-sort-row {
@@ -1406,19 +1660,20 @@ button, input {
 .sal-sort-pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.3rem 0.8rem;
+  padding: 0.32rem 0.85rem;
   border-radius: 999px;
   border: 1.5px solid var(--sal-border-strong);
   background: var(--sal-surface);
   font-size: 0.82rem;
   font-weight: 500;
   color: var(--sal-text-muted);
-  transition: all 0.15s;
+  transition: all var(--sal-dur-fast) var(--sal-ease);
   text-decoration: none;
 }
 .sal-sort-pill:hover {
   border-color: var(--sal-accent);
   color: var(--sal-accent-deep);
+  transform: translateY(-1px);
   text-decoration: none;
 }
 .sal-sort-pill.active {
@@ -1438,11 +1693,15 @@ button, input {
 
 .sal-star-picker .star-item {
   font-size: 2rem;
-  color: #ccc;
+  color: #d8d3ca;
   cursor: pointer;
-  transition: color 0.1s, transform 0.1s;
+  transition: color 0.12s ease, transform var(--sal-dur-fast) var(--sal-ease-spring);
   line-height: 1;
   user-select: none;
+}
+
+.sal-star-picker .star-item:hover {
+  transform: scale(1.18);
 }
 
 .sal-star-picker .star-item.hovered,
@@ -1475,9 +1734,10 @@ button, input {
 .sal-breakdown-big-num {
   font-family: var(--sal-font-display);
   font-weight: 700;
-  font-size: 3.5rem;
+  font-size: 3.6rem;
   line-height: 1;
   color: var(--sal-text);
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-breakdown-big-num.warn { color: var(--sal-warn); }
@@ -1486,7 +1746,7 @@ button, input {
 
 .sal-breakdown-sub { font-size: 0.82rem; color: var(--sal-text-muted); margin-top: 0.3rem; }
 
-.sal-stars-row { color: var(--sal-accent); font-size: 1.1rem; letter-spacing: 0.05em; margin-top: 0.3rem; }
+.sal-stars-row { color: var(--sal-accent); font-size: 1.15rem; letter-spacing: 0.08em; margin-top: 0.3rem; }
 
 .sal-breakdown-bars-side {
   flex: 1;
@@ -1502,9 +1762,9 @@ button, input {
   gap: 0.6rem;
   text-decoration: none;
   color: inherit;
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  transition: background 0.15s;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  transition: background var(--sal-dur-fast) ease;
 }
 .sal-dist-row-link:hover { background: var(--sal-accent-tint); text-decoration: none; }
 .sal-dist-row-link.active { background: var(--sal-accent-tint); }
@@ -1514,6 +1774,7 @@ button, input {
   white-space: nowrap;
   color: var(--sal-text-muted);
   min-width: 36px;
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-dist-bar-track {
@@ -1526,9 +1787,9 @@ button, input {
 
 .sal-dist-bar-fill {
   height: 100%;
-  background: var(--sal-accent);
+  background: linear-gradient(90deg, #f2762e, #e0611a);
   border-radius: 999px;
-  transition: width 0.4s ease;
+  transition: width 0.7s var(--sal-ease);
 }
 
 .sal-dist-pct {
@@ -1536,6 +1797,7 @@ button, input {
   color: var(--sal-text-muted);
   min-width: 32px;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Recommendation pill */
@@ -1543,10 +1805,10 @@ button, input {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background: #e8f3ec;
-  color: #2b6e48;
+  background: #e9f6ef;
+  color: #186a43;
   border-radius: 999px;
-  padding: 0.3rem 0.8rem;
+  padding: 0.3rem 0.85rem;
   font-size: 0.82rem;
   font-weight: 600;
   margin-top: 0.8rem;
@@ -1572,20 +1834,31 @@ button, input {
 
 .sal-sort-wrap select {
   font-size: 0.85rem;
-  padding: 0.3rem 0.6rem;
+  padding: 0.4rem 0.7rem;
   border: 1.5px solid var(--sal-border-strong);
   border-radius: var(--sal-radius-sm);
   background: var(--sal-surface);
   color: var(--sal-text);
+  cursor: pointer;
+  transition: border-color var(--sal-dur-fast) ease;
+}
+
+.sal-sort-wrap select:focus {
+  outline: none;
+  border-color: var(--sal-accent);
+  box-shadow: 0 0 0 4px var(--sal-accent-tint);
 }
 
 /* ---- Salary hero card ---- */
 .sal-salary-hero-card {
-  background: linear-gradient(135deg, var(--sal-accent-tint), transparent);
-  border: 1.5px solid var(--sal-border);
+  background:
+    radial-gradient(500px 240px at 100% 0%, rgba(242, 118, 46, 0.14), transparent 65%),
+    var(--sal-surface);
+  border: 1.5px solid rgba(242, 118, 46, 0.22);
   border-radius: var(--sal-radius-lg);
   padding: 1.8rem 2rem;
   margin-bottom: 1.5rem;
+  box-shadow: var(--sal-shadow-card);
 }
 
 .sal-salary-hero-grid {
@@ -1597,7 +1870,7 @@ button, input {
 @media (max-width: 540px) { .sal-salary-hero-grid { grid-template-columns: 1fr; } }
 
 .sal-salary-hero-label {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--sal-text-muted);
@@ -1608,8 +1881,9 @@ button, input {
 .sal-salary-hero-val {
   font-family: var(--sal-font-display);
   font-weight: 700;
-  font-size: 1.9rem;
+  font-size: 2rem;
   color: var(--sal-accent-deep);
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-salary-range-text {
@@ -1630,8 +1904,8 @@ button, input {
 
 /* 13th month pay box */
 .sal-13th-month-box {
-  background: linear-gradient(135deg, #fff7ee, var(--sal-surface));
-  border: 1.5px solid rgba(224, 146, 60, 0.3);
+  background: linear-gradient(135deg, #fff7f0, var(--sal-surface));
+  border: 1.5px solid rgba(242, 118, 46, 0.3);
   border-radius: var(--sal-radius-md);
   padding: 1.2rem 1.4rem;
   margin-top: 1rem;
@@ -1643,10 +1917,11 @@ button, input {
 .sal-13th-icon { font-size: 1.8rem; flex-shrink: 0; }
 
 .sal-annual-val {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: var(--sal-accent-deep);
   font-family: var(--sal-font-display);
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-annual-explainer {
@@ -1665,7 +1940,7 @@ button, input {
 
 .sal-compare-selector-card {
   background: var(--sal-surface);
-  border: 1.5px solid var(--sal-border);
+  border: 1px solid var(--sal-border);
   border-radius: var(--sal-radius-lg);
   padding: 2rem;
   margin-bottom: 2rem;
@@ -1688,30 +1963,32 @@ button, input {
   text-align: center;
   color: var(--sal-accent-deep);
   padding-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 /* Compare matrix */
 .sal-compare-matrix {
   margin-top: 2rem;
-  border: 1.5px solid var(--sal-border);
+  border: 1px solid var(--sal-border);
   border-radius: var(--sal-radius-lg);
   overflow: hidden;
   box-shadow: var(--sal-shadow-card);
+  background: var(--sal-surface);
 }
 
 .sal-compare-cols-header {
   display: grid;
   grid-template-columns: 220px 1fr 1fr;
   background: var(--sal-surface-sunken);
-  border-bottom: 1.5px solid var(--sal-border);
+  border-bottom: 1px solid var(--sal-border);
 }
 
 .sal-compare-metric-col {
   padding: 1.2rem 1.4rem;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   color: var(--sal-text-muted);
 }
 
@@ -1721,14 +1998,15 @@ button, input {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  border-left: 1.5px solid var(--sal-border);
+  border-left: 1px solid var(--sal-border);
 }
 
 .sal-compare-co-avatar {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: var(--sal-radius-sm);
   background: var(--sal-accent-tint);
+  border: 1px solid rgba(242, 118, 46, 0.25);
   color: var(--sal-accent-deep);
   font-family: var(--sal-font-display);
   font-weight: 700;
@@ -1755,7 +2033,9 @@ button, input {
   display: grid;
   grid-template-columns: 220px 1fr 1fr;
   border-bottom: 1px solid var(--sal-border);
+  transition: background var(--sal-dur-fast) ease;
 }
+.sal-compare-row:hover { background: rgba(242, 118, 46, 0.03); }
 .sal-compare-row:last-child { border-bottom: none; }
 
 .sal-metric-name {
@@ -1785,7 +2065,7 @@ button, input {
 }
 
 .sal-metric-val.winner {
-  background: rgba(76, 143, 104, 0.06);
+  background: rgba(31, 122, 77, 0.06);
 }
 
 .sal-rec-val {
@@ -1793,9 +2073,10 @@ button, input {
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--sal-good);
+  font-variant-numeric: tabular-nums;
 }
 
-/* ---- Auth UX improvements ---- */
+/* ---- Auth UX ---- */
 .sal-auth-trust {
   display: flex;
   flex-direction: column;
@@ -1808,10 +2089,10 @@ button, input {
   align-items: center;
   gap: 0.6rem;
   font-size: 0.84rem;
-  color: rgba(255,255,255,0.75);
+  color: rgba(255, 255, 255, 0.78);
 }
 
-.sal-trust-item svg { opacity: 0.7; flex-shrink: 0; }
+.sal-trust-item svg { opacity: 0.75; flex-shrink: 0; color: #ff9a5c; }
 
 .sal-auth-logo-mobile {
   display: none;
@@ -1877,7 +2158,7 @@ button, input {
 
 .sal-pw-strength-track {
   flex: 1;
-  height: 4px;
+  height: 6px;
   background: var(--sal-surface-sunken);
   border-radius: 999px;
   overflow: hidden;
@@ -1888,13 +2169,14 @@ button, input {
   width: 0;
   border-radius: 999px;
   background: var(--sal-bad);
-  transition: width 0.3s ease, background 0.3s ease;
+  transition: width 0.4s var(--sal-ease), background 0.3s ease;
 }
 
 .sal-pw-strength-label {
   font-size: 0.75rem;
   color: var(--sal-text-muted);
   min-width: 60px;
+  font-weight: 600;
 }
 
 .sal-pw-hint {
@@ -1907,8 +2189,8 @@ button, input {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background: rgba(184, 86, 58, 0.1);
-  border: 1.5px solid rgba(184, 86, 58, 0.3);
+  background: rgba(176, 68, 38, 0.08);
+  border: 1.5px solid rgba(176, 68, 38, 0.3);
   border-radius: var(--sal-radius-sm);
   color: var(--sal-bad);
   padding: 0.75rem 1rem;
@@ -1922,9 +2204,9 @@ button, input {
   justify-content: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  font-size: 0.95rem;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+  font-size: 0.98rem;
 }
 
 .sal-auth-tos {
@@ -1943,7 +2225,7 @@ button, input {
   justify-content: center;
   gap: 0;
   background: var(--sal-surface);
-  border: 1.5px solid var(--sal-border);
+  border: 1px solid var(--sal-border);
   border-radius: var(--sal-radius-lg);
   padding: 1.2rem 2rem;
   margin-bottom: 2rem;
@@ -1962,9 +2244,10 @@ button, input {
 .sal-pstat-num {
   font-family: var(--sal-font-display);
   font-weight: 700;
-  font-size: 2rem;
+  font-size: 2.1rem;
   color: var(--sal-accent-deep);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .sal-pstat-label {
@@ -2006,7 +2289,10 @@ button, input {
   gap: 4px;
   align-items: center;
   justify-content: center;
+  transition: border-color var(--sal-dur-fast) ease;
 }
+
+.sal-nav-toggle:hover { border-color: var(--sal-accent); }
 
 .sal-nav-toggle .bar {
   display: block;
@@ -2014,7 +2300,7 @@ button, input {
   height: 2px;
   background: currentColor;
   border-radius: 1px;
-  transition: transform 0.2s, opacity 0.2s;
+  transition: transform 0.25s var(--sal-ease), opacity 0.2s ease;
 }
 
 .sal-nav-toggle--open .bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
@@ -2024,6 +2310,8 @@ button, input {
 @media (max-width: 768px) {
   .sal-nav-toggle { display: flex; }
 
+  .sal-navbar { padding: 0.85rem 1.25rem; }
+
   .sal-nav-menu {
     display: none;
     position: absolute;
@@ -2031,13 +2319,179 @@ button, input {
     left: 0;
     right: 0;
     background: var(--sal-surface);
-    border-top: 1.5px solid var(--sal-border);
+    border-top: 1px solid var(--sal-border);
     padding: 1rem 1.5rem;
     flex-direction: column;
     gap: 0.5rem;
-    box-shadow: var(--sal-shadow-card);
+    box-shadow: var(--sal-shadow-raised);
     z-index: 100;
+    animation: sal-drop 0.3s var(--sal-ease) both;
   }
 
   .sal-nav-menu--open { display: flex; }
+
+  .sal-nav-link {
+    display: block;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.98rem;
+  }
+}
+
+@keyframes sal-drop {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   Motion layer — reveal-on-scroll + utility animations
+   (JS toggles .is-visible via IntersectionObserver; the
+   html.js gate prevents any flash when JS is disabled)
+   ========================================================= */
+
+html.js .sal-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s var(--sal-ease), transform 0.7s var(--sal-ease);
+  transition-delay: var(--sal-reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+
+html.js .sal-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+html.js .sal-reveal-s {
+  transform: translateY(12px);
+  transition-duration: 0.5s;
+}
+
+/* Gentle scale-in for the first paint of auth forms */
+@keyframes sal-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sal-auth-card {
+  animation: sal-fade-up 0.6s var(--sal-ease) both 0.1s;
+}
+
+/* Skeleton sheen (kept for future loading states) */
+@keyframes sal-sheen {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+/* =========================================================
+   Semantic utilities (classes used by templates for layout)
+   ========================================================= */
+
+/* Section heading rows (detail + profile) */
+.sal-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.sal-section-header h2,
+.sal-section-header h3 {
+  margin-bottom: 0;
+}
+
+/* Sub-copy under a page heading */
+.sal-content-sub {
+  color: var(--sal-text-muted);
+  font-size: 0.95rem;
+  margin-top: -0.4rem;
+}
+
+/* Split layout columns */
+.sal-main-col { min-width: 0; }
+.sal-side-col { min-width: 0; }
+
+/* Profile page columns */
+.sal-profile-sidebar { min-width: 0; }
+.sal-profile-content { min-width: 0; }
+
+/* Empty-state icon */
+.sal-empty-icon {
+  font-size: 2.6rem;
+  line-height: 1;
+  margin-bottom: 0.7rem;
+  filter: grayscale(0.2);
+}
+
+/* Meta chips inside cards */
+.sal-meta-ind {
+  color: var(--sal-text-muted);
+}
+
+.sal-meta-followers {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sal-accent-deep);
+  background: var(--sal-accent-tint);
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Author cell in salary table */
+.sal-author-cell {
+  font-size: 0.88rem;
+  color: var(--sal-text);
+}
+
+/* Reviews filter info line */
+.sal-reviews-filter-info {
+  font-size: 0.85rem;
+  color: var(--sal-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Vote counters */
+.sal-vote-count {
+  font-weight: 700;
+  color: var(--sal-text);
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  min-width: 1ch;
+  transition: transform var(--sal-dur-fast) var(--sal-ease-spring);
+}
+
+.sal-vote-count.bump {
+  transform: scale(1.35);
+  color: var(--sal-accent-deep);
+}
+
+/* Report details disclosure */
+.sal-report-details {
+  margin-top: 0.4rem;
+}
+
+.sal-report-details summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--sal-text-muted);
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: color var(--sal-dur-fast) ease;
+}
+
+.sal-report-details summary::-webkit-details-marker { display: none; }
+
+.sal-report-details summary:hover { color: var(--sal-bad); }
+
+/* User summary card on profile */
+.sal-user-summary-card {
+  position: relative;
+  text-align: left;
 }
