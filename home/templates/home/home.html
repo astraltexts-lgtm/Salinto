@@ -68,7 +68,7 @@
 </section>
 
 <div class="sal-content">
-  <div class="sal-content-heading">
+  <div class="sal-content-heading sal-reveal sal-reveal-s">
     <div>
       <h2>
         {% if query %}
@@ -85,7 +85,7 @@
   </div>
 
   <!-- Sort Controls -->
-  <div class="sal-sort-row">
+  <div class="sal-sort-row sal-reveal sal-reveal-s">
     <span class="sal-sort-label">Sort by:</span>
     <div class="sal-sort-pills">
       <a href="?q={{ query }}&industry={{ selected_industry }}&sort=highest"
@@ -110,7 +110,7 @@
   {% if companies %}
     <div class="sal-company-grid">
       {% for company in companies %}
-        <a href="{% url 'home:company_detail' company.pk %}" class="sal-company-card-link">
+        <a href="{% url 'home:company_detail' company.pk %}" class="sal-company-card-link sal-reveal">
           <div class="sal-company-card">
             <div class="sal-card-top">
               <div class="sal-company-avatar">
@@ -154,7 +154,7 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="sal-empty">
+    <div class="sal-empty sal-reveal">
       <div class="sal-empty-icon">&#128269;</div>
       <h3>No companies matched your criteria</h3>
       <p>Try searching for a different keyword, removing filters, or browsing all industries.</p>
